@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { Animated, ImageBackground, Pressable, StyleSheet, Switch, View, useWindowDimensions } from 'react-native';
+import React, { useMemo, useRef, useState } from 'react';
+import { Animated, Easing, ImageBackground, Pressable, StyleSheet, Switch, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Feather from '@expo/vector-icons/Feather';
 import * as Speech from 'expo-speech';
@@ -65,6 +65,43 @@ export function SplashScreen({ go }) {
   const ctaScale = Math.max(0.78, Math.min(isTablet ? 1.16 : 1, shortSide / 390));
   const logoTop = height < 720 ? 48 : isTablet ? Math.max(72, height * 0.09) : 82;
   const ctaWidth = Math.min(width * (isDesktop ? 0.36 : isTablet ? 0.54 : 0.82), isTablet ? 460 : 390);
+  const ctaHover = useRef(new Animated.Value(0)).current;
+  const ctaAnimatedStyle = {
+    backgroundColor: ctaHover.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['#FFD84D', '#FFE86C']
+    }),
+    shadowOpacity: ctaHover.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0.32, 0.54]
+    }),
+    shadowRadius: ctaHover.interpolate({
+      inputRange: [0, 1],
+      outputRange: [18, 30]
+    }),
+    transform: [
+      {
+        scale: ctaHover.interpolate({
+          inputRange: [0, 1],
+          outputRange: [1, 1.045]
+        })
+      },
+      {
+        translateY: ctaHover.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, -3]
+        })
+      }
+    ]
+  };
+  const animateCtaHover = (toValue) => {
+    Animated.timing(ctaHover, {
+      toValue,
+      duration: 180,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false
+    }).start();
+  };
 
   return (
     <ImageBackground
@@ -106,16 +143,18 @@ export function SplashScreen({ go }) {
             accessibilityRole="button"
             accessibilityLabel="Start Learning"
             onPress={() => go('onboarding')}
-            style={({ pressed, hovered }) => [
-              styles.referenceCta,
-              { width: ctaWidth },
-              (pressed || hovered) && styles.referenceCtaActive
-            ]}
+            onHoverIn={() => animateCtaHover(1)}
+            onHoverOut={() => animateCtaHover(0)}
+            onPressIn={() => animateCtaHover(1)}
+            onPressOut={() => animateCtaHover(0)}
+            style={[styles.referenceCtaHitArea, { width: ctaWidth }]}
           >
-            <View style={[styles.playDisc, { width: 54 * ctaScale, height: 54 * ctaScale, borderRadius: 27 * ctaScale }]}>
-              <Feather name="play" size={30 * ctaScale} color={colors.purpleDark} fill={colors.purpleDark} />
-            </View>
-            <KidText style={[styles.referenceCtaText, { fontSize: 28 * ctaScale, lineHeight: 34 * ctaScale }]}>Start Learning</KidText>
+            <Animated.View style={[styles.referenceCta, ctaAnimatedStyle]}>
+              <View style={[styles.playDisc, { width: 54 * ctaScale, height: 54 * ctaScale, borderRadius: 27 * ctaScale }]}>
+                <Feather name="play" size={30 * ctaScale} color={colors.purpleDark} fill={colors.purpleDark} />
+              </View>
+              <KidText style={[styles.referenceCtaText, { fontSize: 28 * ctaScale, lineHeight: 34 * ctaScale }]}>Start Learning</KidText>
+            </Animated.View>
           </Pressable>
           <View style={styles.splashDots}>
             {[0, 1, 2, 3].map((dot) => <View key={dot} style={[styles.splashDot, dot === 0 && styles.splashDotActive]} />)}
@@ -566,9 +605,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 14
   },
-  referenceCta: {
+  referenceCtaHitArea: {
     width: '82%',
     maxWidth: 390,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  referenceCta: {
+    width: '100%',
     minHeight: 82,
     borderRadius: 42,
     backgroundColor: '#FFD84D',
