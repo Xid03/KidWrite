@@ -167,32 +167,102 @@ export function SplashScreen({ go }) {
 
 export function OnboardingScreen({ go }) {
   const [index, setIndex] = useState(0);
-  const slide = onboarding[index];
+  const { width, height } = useWindowDimensions();
+  const isCompact = width < 560;
+  const isTablet = width >= 760 || height >= 1000;
+  const stageWidth = Math.min(width - 28, isTablet ? 1180 : 960);
+  const cardGap = isCompact ? 8 : 22;
+  const cardWidth = Math.max(150, Math.min(isTablet ? 330 : 285, (stageWidth - cardGap * 2) / 3));
+  const artSize = Math.max(120, Math.min(isTablet ? 250 : 210, cardWidth * 0.78));
+  const logoScale = Math.max(0.72, Math.min(isTablet ? 1.18 : 0.98, width / 900));
   const next = () => (index === onboarding.length - 1 ? go('home') : setIndex(index + 1));
-  const art = slide.character === 'apple' ? <AppleArt size={122} /> : slide.character === 'ducks' ? <DucksArt size={160} /> : <CatArt size={142} />;
+  const cardThemes = [
+    { titleColor: '#E95F18', badge: '#FFD43D', bg: ['rgba(255,249,218,0.98)', 'rgba(255,238,164,0.93)'] },
+    { titleColor: '#126DCE', badge: '#46B9FF', bg: ['rgba(241,249,255,0.98)', 'rgba(201,235,255,0.93)'] },
+    { titleColor: '#DC2A9A', badge: '#FF62B4', bg: ['rgba(255,241,250,0.98)', 'rgba(255,210,238,0.93)'] }
+  ];
 
   return (
-    <ScreenScaffold bottomInset={false}>
-      <View style={styles.onboardingGrid}>
-        {onboarding.map((item, itemIndex) => (
-          <GlassCard key={item.title} style={[styles.onboardingCard, itemIndex !== index && styles.slideGhost]}>
-            <KidText variant="section" style={styles.center}>{item.title}</KidText>
-            <View style={styles.sampleWrap}>
-              <LetterTraceArt text={item.sample} accent={item.accent} size={190} />
-              <View style={styles.sampleCharacter}>{item.character === 'apple' ? <AppleArt size={92} /> : item.character === 'ducks' ? <DucksArt size={130} /> : <CatArt size={106} />}</View>
-            </View>
-            <KidText variant="caption" style={styles.center}>{item.subtitle}</KidText>
-          </GlassCard>
-        ))}
-      </View>
-      <View style={styles.onboardingActive}>
-        <View style={styles.bigArt}>{art}</View>
-        <View style={styles.dots}>
-          {onboarding.map((_, dot) => <View key={dot} style={[styles.dot, dot === index && styles.dotActive]} />)}
+    <ImageBackground
+      source={require('../../assets/onboarding-fantasy.png')}
+      resizeMode="cover"
+      imageStyle={styles.onboardingSceneImage}
+      style={styles.onboardingRoot}
+      accessibilityLabel="KidWrite onboarding fantasy learning scene"
+    >
+      <View style={styles.onboardingShade}>
+        <View style={[styles.onboardingLogoBlock, { transform: [{ scale: logoScale }] }]}>
+          <View style={styles.kidwriteLogo} accessible accessibilityRole="header">
+            {'KidWrite'.split('').map((letter, letterIndex) => (
+              <KidText
+                key={`${letter}-${letterIndex}`}
+                variant="hero"
+                style={[
+                  styles.logoLetter,
+                  { color: ['#FF3DA4', '#FF7D2A', '#FFBB35', '#19AFFF', '#1889F7', '#6852F4', '#8A44F6', '#7C35E8'][letterIndex] }
+                ]}
+              >
+                {letter}
+              </KidText>
+            ))}
+          </View>
+          <View style={styles.taglineRow}>
+            <KidText style={[styles.taglineWord, { color: colors.yellow }]}>Learn.</KidText>
+            <KidText style={[styles.taglineWord, { color: colors.white }]}>Trace.</KidText>
+            <KidText style={[styles.taglineWord, { color: '#8BEE72' }]}>Grow!</KidText>
+          </View>
         </View>
-        <PrimaryButton title={index === onboarding.length - 1 ? 'Let’s Go' : 'Next'} icon="arrow-right" variant="purple" onPress={next} />
+
+        <View style={[styles.onboardingStage, { width: stageWidth, gap: cardGap }]}>
+          {onboarding.map((item, itemIndex) => {
+            const theme = cardThemes[itemIndex];
+            const isActive = itemIndex === index;
+            return (
+              <Pressable
+                key={item.title}
+                accessibilityRole="button"
+                accessibilityLabel={item.title}
+                onPress={() => setIndex(itemIndex)}
+                style={[styles.onboardingLessonPress, { width: cardWidth }, isActive && styles.onboardingLessonActive]}
+              >
+                <LinearGradient colors={theme.bg} style={[styles.onboardingLessonCard, itemIndex === 0 && styles.lessonCardWarm, itemIndex === 1 && styles.lessonCardCool, itemIndex === 2 && styles.lessonCardPink]}>
+                  <View style={[styles.lessonNumberBadge, { backgroundColor: theme.badge }]}>
+                    <KidText style={styles.lessonNumberText}>{itemIndex + 1}</KidText>
+                  </View>
+                  <KidText variant="title" style={[styles.onboardingLessonTitle, { color: theme.titleColor }]}>{item.title}</KidText>
+                  <View style={styles.onboardingLessonArt}>
+                    {itemIndex === 0 ? (
+                      <>
+                        <LetterTraceArt text="A" accent="#FF5B57" size={artSize} />
+                        <View style={styles.lessonCharacterLeft}><AppleArt size={artSize * 0.46} /></View>
+                      </>
+                    ) : itemIndex === 1 ? (
+                      <>
+                        <NumberTraceArt number="3" size={artSize} />
+                        <View style={styles.lessonDucks}><DucksArt size={artSize * 0.74} /></View>
+                      </>
+                    ) : (
+                      <>
+                        <LetterTraceArt text="CAT" accent="#FF79C8" size={artSize * 1.08} />
+                        <View style={styles.lessonCat}><CatArt size={artSize * 0.58} /></View>
+                      </>
+                    )}
+                  </View>
+                  <KidText style={[styles.onboardingLessonCopy, { color: theme.titleColor }]}>{item.subtitle}</KidText>
+                </LinearGradient>
+              </Pressable>
+            );
+          })}
+        </View>
+
+        <View style={styles.onboardingFooter}>
+          <PrimaryButton title={index === onboarding.length - 1 ? 'Let’s Go' : 'Next'} icon="arrow-right" variant="yellow" onPress={next} style={styles.onboardingNextButton} />
+          <View style={styles.splashDots}>
+            {onboarding.map((_, dot) => <View key={dot} style={[styles.splashDot, dot === index && styles.splashDotActive]} />)}
+          </View>
+        </View>
       </View>
-    </ScreenScaffold>
+    </ImageBackground>
   );
 }
 
@@ -690,52 +760,127 @@ const styles = StyleSheet.create({
     maxHeight: '52%',
     marginVertical: 14
   },
-  onboardingGrid: {
+  onboardingRoot: {
+    flex: 1,
+    backgroundColor: '#5C4EFF'
+  },
+  onboardingSceneImage: {
+    width: '100%',
+    height: '100%'
+  },
+  onboardingShade: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 14,
+    paddingTop: 28,
+    paddingBottom: 22,
+    backgroundColor: 'rgba(41, 34, 148, 0.05)'
+  },
+  onboardingLogoBlock: {
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 4
+  },
+  onboardingStage: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 14,
+    alignItems: 'stretch',
+    justifyContent: 'center',
+    flexWrap: 'nowrap',
+    marginTop: 8
+  },
+  onboardingLessonPress: {
+    borderRadius: 34,
+    ...shadow
+  },
+  onboardingLessonActive: {
+    transform: [{ translateY: -8 }, { scale: 1.025 }]
+  },
+  onboardingLessonCard: {
+    minHeight: 430,
+    height: '100%',
+    borderRadius: 34,
+    borderWidth: 4,
+    paddingHorizontal: 18,
+    paddingTop: 42,
+    paddingBottom: 24,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    overflow: 'hidden'
+  },
+  lessonCardWarm: {
+    borderColor: '#FFE27A'
+  },
+  lessonCardCool: {
+    borderColor: '#CFEFFF'
+  },
+  lessonCardPink: {
+    borderColor: '#FFB7E8'
+  },
+  lessonNumberBadge: {
+    position: 'absolute',
+    top: -26,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 4,
+    borderColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadow
+  },
+  lessonNumberText: {
+    color: colors.white,
+    fontSize: 30,
+    lineHeight: 36,
+    fontWeight: '900',
+    textShadowColor: 'rgba(21,17,87,0.22)',
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 4
+  },
+  onboardingLessonTitle: {
+    fontSize: 27,
+    lineHeight: 32,
+    textAlign: 'center',
+    marginTop: 10,
+    textShadowColor: 'rgba(255,255,255,0.55)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 3
+  },
+  onboardingLessonArt: {
+    flex: 1,
+    width: '100%',
+    minHeight: 210,
+    alignItems: 'center',
     justifyContent: 'center'
   },
-  onboardingCard: {
-    width: 300,
-    minHeight: 430,
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  slideGhost: {
-    opacity: 0.72
-  },
-  sampleWrap: {
-    minHeight: 230,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  sampleCharacter: {
+  lessonCharacterLeft: {
     position: 'absolute',
-    bottom: 12,
-    left: 0
+    left: 6,
+    bottom: 12
   },
-  onboardingActive: {
+  lessonDucks: {
+    position: 'absolute',
+    bottom: 18
+  },
+  lessonCat: {
+    position: 'absolute',
+    bottom: 2
+  },
+  onboardingLessonCopy: {
+    minHeight: 56,
+    fontSize: 19,
+    lineHeight: 24,
+    fontWeight: '900',
+    textAlign: 'center'
+  },
+  onboardingFooter: {
     alignItems: 'center',
-    gap: 18
+    gap: 14,
+    marginBottom: 2
   },
-  bigArt: {
-    minHeight: 96,
-    alignItems: 'center'
-  },
-  dots: {
-    flexDirection: 'row',
-    gap: 8
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#C8C9EA'
-  },
-  dotActive: {
-    width: 22,
-    backgroundColor: colors.purple
+  onboardingNextButton: {
+    minWidth: 260
   },
   topRow: {
     flexDirection: 'row',
