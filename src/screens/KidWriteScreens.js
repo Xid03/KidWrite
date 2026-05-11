@@ -58,16 +58,26 @@ function ObjectGroup({ count = 5 }) {
 
 export function SplashScreen({ go }) {
   const { width, height } = useWindowDimensions();
-  const isWide = width >= 720;
-  const posterWidth = isWide ? Math.min(500, height * 0.62) : width;
-  const posterHeight = isWide ? Math.min(height - 32, posterWidth * 1.42) : height;
-  const logoScale = Math.max(0.82, Math.min(1.14, posterWidth / 430));
-  const ctaScale = Math.max(0.76, Math.min(1, posterWidth / 390));
+  const isTablet = width >= 700 || height >= 1000;
+  const isDesktop = width >= 1200;
+  const isLandscapeTablet = isTablet && width > height;
+  const artAspect = isLandscapeTablet ? 0.68 : 941 / 1672;
+  const horizontalMargin = isDesktop ? 96 : isTablet ? 44 : 0;
+  const verticalMargin = isTablet ? 28 : 0;
+  const maxPosterWidth = width - horizontalMargin * 2;
+  const maxPosterHeight = height - verticalMargin * 2;
+  const tabletWidthCap = isLandscapeTablet ? 720 : 820;
+  const desktopWidthCap = isLandscapeTablet ? 760 : 840;
+  const widthCap = isDesktop ? desktopWidthCap : tabletWidthCap;
+  const posterWidth = isTablet ? Math.min(maxPosterWidth, widthCap, maxPosterHeight * artAspect) : width;
+  const posterHeight = isTablet ? Math.min(maxPosterHeight, posterWidth / artAspect) : height;
+  const logoScale = Math.max(0.82, Math.min(isTablet ? 1.36 : 1.14, posterWidth / 430));
+  const ctaScale = Math.max(0.76, Math.min(isTablet ? 1.16 : 1, posterWidth / 390));
   const logoTop = posterHeight < 720 ? 56 : 82;
 
   return (
     <LinearGradient colors={['#F6FAFF', '#E8F1FF']} style={styles.splashRoot}>
-      <View style={[styles.splashPosterWrap, { width: posterWidth, height: posterHeight }, isWide && styles.splashPosterWrapWide]}>
+      <View style={[styles.splashPosterWrap, { width: posterWidth, height: posterHeight }, isTablet && styles.splashPosterWrapWide]}>
         <ImageBackground
           source={require('../../assets/splash-fantasy.png')}
           resizeMode="cover"
