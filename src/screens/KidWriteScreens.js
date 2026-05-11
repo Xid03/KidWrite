@@ -60,80 +60,69 @@ export function SplashScreen({ go }) {
   const { width, height } = useWindowDimensions();
   const isTablet = width >= 700 || height >= 1000;
   const isDesktop = width >= 1200;
-  const isLandscapeTablet = isTablet && width > height;
-  const artAspect = isLandscapeTablet ? 0.68 : 941 / 1672;
-  const horizontalMargin = isDesktop ? 96 : isTablet ? 44 : 0;
-  const verticalMargin = isTablet ? 28 : 0;
-  const maxPosterWidth = width - horizontalMargin * 2;
-  const maxPosterHeight = height - verticalMargin * 2;
-  const tabletWidthCap = isLandscapeTablet ? 720 : 820;
-  const desktopWidthCap = isLandscapeTablet ? 760 : 840;
-  const widthCap = isDesktop ? desktopWidthCap : tabletWidthCap;
-  const posterWidth = isTablet ? Math.min(maxPosterWidth, widthCap, maxPosterHeight * artAspect) : width;
-  const posterHeight = isTablet ? Math.min(maxPosterHeight, posterWidth / artAspect) : height;
-  const logoScale = Math.max(0.82, Math.min(isTablet ? 1.36 : 1.14, posterWidth / 430));
-  const ctaScale = Math.max(0.76, Math.min(isTablet ? 1.16 : 1, posterWidth / 390));
-  const logoTop = posterHeight < 720 ? 56 : 82;
+  const shortSide = Math.min(width, height);
+  const logoScale = Math.max(0.82, Math.min(isTablet ? 1.34 : 1.1, shortSide / 430));
+  const ctaScale = Math.max(0.78, Math.min(isTablet ? 1.16 : 1, shortSide / 390));
+  const logoTop = height < 720 ? 48 : isTablet ? Math.max(72, height * 0.09) : 82;
+  const ctaWidth = Math.min(width * (isDesktop ? 0.36 : isTablet ? 0.54 : 0.82), isTablet ? 460 : 390);
 
   return (
-    <LinearGradient colors={['#F6FAFF', '#E8F1FF']} style={styles.splashRoot}>
-      <View style={[styles.splashPosterWrap, { width: posterWidth, height: posterHeight }, isTablet && styles.splashPosterWrapWide]}>
-        <ImageBackground
-          source={require('../../assets/splash-fantasy.png')}
-          resizeMode="cover"
-          imageStyle={styles.splashSceneImage}
-          style={styles.splashScene}
-          accessibilityLabel="KidWrite magical learning splash scene with child riding a pencil"
-        >
-          <View style={styles.musicBubble}>
-            <Feather name="music" size={26 * logoScale} color={colors.purple} />
-          </View>
+    <ImageBackground
+      source={require('../../assets/splash-fantasy.png')}
+      resizeMode="cover"
+      imageStyle={styles.splashSceneImage}
+      style={styles.splashRoot}
+      accessibilityLabel="KidWrite magical learning splash scene with child riding a pencil"
+    >
+      <View style={[styles.splashShade, { paddingTop: logoTop }]}>
+        <View style={styles.musicBubble}>
+          <Feather name="music" size={26 * logoScale} color={colors.purple} />
+        </View>
 
-          <View style={[styles.logoCluster, { marginTop: logoTop, transform: [{ scale: logoScale }] }]}>
-            <View style={styles.kidwriteLogo} accessible accessibilityRole="header">
-              {'KidWrite'.split('').map((letter, index) => (
-                <KidText
-                  key={`${letter}-${index}`}
-                  variant="hero"
-                  style={[
-                    styles.logoLetter,
-                    { color: ['#FF3DA4', '#FF7D2A', '#FFBB35', '#19AFFF', '#1889F7', '#6852F4', '#8A44F6', '#7C35E8'][index] }
-                  ]}
-                >
-                  {letter}
-                </KidText>
-              ))}
-            </View>
-            <View style={styles.taglineRow}>
-              <KidText style={[styles.taglineWord, { color: colors.yellow }]}>Learn.</KidText>
-              <KidText style={[styles.taglineWord, { color: colors.white }]}>Trace.</KidText>
-              <KidText style={[styles.taglineWord, { color: '#8BEE72' }]}>Grow!</KidText>
-            </View>
+        <View style={[styles.logoCluster, { transform: [{ scale: logoScale }] }]}>
+          <View style={styles.kidwriteLogo} accessible accessibilityRole="header">
+            {'KidWrite'.split('').map((letter, index) => (
+              <KidText
+                key={`${letter}-${index}`}
+                variant="hero"
+                style={[
+                  styles.logoLetter,
+                  { color: ['#FF3DA4', '#FF7D2A', '#FFBB35', '#19AFFF', '#1889F7', '#6852F4', '#8A44F6', '#7C35E8'][index] }
+                ]}
+              >
+                {letter}
+              </KidText>
+            ))}
           </View>
+          <View style={styles.taglineRow}>
+            <KidText style={[styles.taglineWord, { color: colors.yellow }]}>Learn.</KidText>
+            <KidText style={[styles.taglineWord, { color: colors.white }]}>Trace.</KidText>
+            <KidText style={[styles.taglineWord, { color: '#8BEE72' }]}>Grow!</KidText>
+          </View>
+        </View>
 
-          <View style={styles.splashButtonArea}>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Start Learning"
-              onPress={() => go('onboarding')}
-              style={({ pressed, hovered }) => [
-                styles.referenceCta,
-                { width: posterWidth < 380 ? '88%' : '82%' },
-                (pressed || hovered) && styles.referenceCtaActive
-              ]}
-            >
-              <View style={[styles.playDisc, { width: 54 * ctaScale, height: 54 * ctaScale, borderRadius: 27 * ctaScale }]}>
-                <Feather name="play" size={30 * ctaScale} color={colors.purpleDark} fill={colors.purpleDark} />
-              </View>
-              <KidText style={[styles.referenceCtaText, { fontSize: 28 * ctaScale, lineHeight: 34 * ctaScale }]}>Start Learning</KidText>
-            </Pressable>
-            <View style={styles.splashDots}>
-              {[0, 1, 2, 3].map((dot) => <View key={dot} style={[styles.splashDot, dot === 0 && styles.splashDotActive]} />)}
+        <View style={styles.splashButtonArea}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Start Learning"
+            onPress={() => go('onboarding')}
+            style={({ pressed, hovered }) => [
+              styles.referenceCta,
+              { width: ctaWidth },
+              (pressed || hovered) && styles.referenceCtaActive
+            ]}
+          >
+            <View style={[styles.playDisc, { width: 54 * ctaScale, height: 54 * ctaScale, borderRadius: 27 * ctaScale }]}>
+              <Feather name="play" size={30 * ctaScale} color={colors.purpleDark} fill={colors.purpleDark} />
             </View>
+            <KidText style={[styles.referenceCtaText, { fontSize: 28 * ctaScale, lineHeight: 34 * ctaScale }]}>Start Learning</KidText>
+          </Pressable>
+          <View style={styles.splashDots}>
+            {[0, 1, 2, 3].map((dot) => <View key={dot} style={[styles.splashDot, dot === 0 && styles.splashDotActive]} />)}
           </View>
-        </ImageBackground>
+        </View>
       </View>
-    </LinearGradient>
+    </ImageBackground>
   );
 }
 
@@ -509,24 +498,15 @@ const styles = StyleSheet.create({
   },
   splashRoot: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  splashPosterWrap: {
-    overflow: 'hidden',
     backgroundColor: '#5C4EFF'
   },
-  splashPosterWrapWide: {
-    borderRadius: 36,
-    ...shadow
-  },
-  splashScene: {
+  splashShade: {
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 22,
-    paddingTop: 58,
-    paddingBottom: 24
+    paddingBottom: 24,
+    backgroundColor: 'rgba(28, 21, 120, 0.04)'
   },
   splashSceneImage: {
     width: '100%',
