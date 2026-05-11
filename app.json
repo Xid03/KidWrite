@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "KidWrite",
+    "slug": "kidwrite",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/app-icon.png",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "splash": {
+      "image": "./assets/mascot-pencil.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#6D5BFF"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.xid.kidwrite"
+    },
+    "android": {
+      "package": "com.xid.kidwrite",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/app-icon.png",
+        "backgroundColor": "#6D5BFF"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/app-icon.png"
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}

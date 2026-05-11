@@ -1,0 +1,33 @@
+{
+  "name": "kidwrite",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "doctor": "expo-doctor"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "description": "Premium playful kids tracing and early literacy app built with Expo React Native.",
+  "dependencies": {
+    "@expo/vector-icons": "^15.1.1",
+    "expo": "^55.0.23",
+    "expo-font": "~55.0.7",
+    "expo-linear-gradient": "^55.0.13",
+    "expo-speech": "^55.0.13",
+    "firebase": "^12.13.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.83.6",
+    "react-native-svg": "15.15.3",
+    "react-native-web": "^0.21.2"
+  },
+  "devDependencies": {
+    "expo-doctor": "^1.18.19"
+  }
+}
