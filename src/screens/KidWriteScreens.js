@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Animated, Image, Pressable, StyleSheet, Switch, View, useWindowDimensions } from 'react-native';
+import { Animated, ImageBackground, Pressable, StyleSheet, Switch, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Feather from '@expo/vector-icons/Feather';
 import * as Speech from 'expo-speech';
@@ -57,18 +57,73 @@ function ObjectGroup({ count = 5 }) {
 }
 
 export function SplashScreen({ go }) {
+  const { width, height } = useWindowDimensions();
+  const isWide = width >= 720;
+  const posterWidth = isWide ? Math.min(500, height * 0.62) : width;
+  const posterHeight = isWide ? Math.min(height - 32, posterWidth * 1.42) : height;
+  const logoScale = Math.max(0.82, Math.min(1.14, posterWidth / 430));
+  const ctaScale = Math.max(0.76, Math.min(1, posterWidth / 390));
+  const logoTop = posterHeight < 720 ? 56 : 82;
+
   return (
-    <ScreenScaffold scroll={false} bottomInset={false} style={styles.splash}>
-      <LinearGradient colors={gradients.magic} style={styles.splashPanel}>
-        <Confetti />
-        <KidText variant="hero" style={styles.logo}>
-          KidWrite
-        </KidText>
-        <KidText style={styles.logoSub}>Learn. Trace. Grow!</KidText>
-        <MascotImage style={styles.splashMascot} />
-        <PrimaryButton title="Start Learning" variant="yellow" icon="play" onPress={() => go('onboarding')} />
-      </LinearGradient>
-    </ScreenScaffold>
+    <LinearGradient colors={['#F6FAFF', '#E8F1FF']} style={styles.splashRoot}>
+      <View style={[styles.splashPosterWrap, { width: posterWidth, height: posterHeight }, isWide && styles.splashPosterWrapWide]}>
+        <ImageBackground
+          source={require('../../assets/splash-fantasy.png')}
+          resizeMode="cover"
+          imageStyle={styles.splashSceneImage}
+          style={styles.splashScene}
+          accessibilityLabel="KidWrite magical learning splash scene with child riding a pencil"
+        >
+          <View style={styles.musicBubble}>
+            <Feather name="music" size={26 * logoScale} color={colors.purple} />
+          </View>
+
+          <View style={[styles.logoCluster, { marginTop: logoTop, transform: [{ scale: logoScale }] }]}>
+            <View style={styles.kidwriteLogo} accessible accessibilityRole="header">
+              {'KidWrite'.split('').map((letter, index) => (
+                <KidText
+                  key={`${letter}-${index}`}
+                  variant="hero"
+                  style={[
+                    styles.logoLetter,
+                    { color: ['#FF3DA4', '#FF7D2A', '#FFBB35', '#19AFFF', '#1889F7', '#6852F4', '#8A44F6', '#7C35E8'][index] }
+                  ]}
+                >
+                  {letter}
+                </KidText>
+              ))}
+            </View>
+            <View style={styles.taglineRow}>
+              <KidText style={[styles.taglineWord, { color: colors.yellow }]}>Learn.</KidText>
+              <KidText style={[styles.taglineWord, { color: colors.white }]}>Trace.</KidText>
+              <KidText style={[styles.taglineWord, { color: '#8BEE72' }]}>Grow!</KidText>
+            </View>
+          </View>
+
+          <View style={styles.splashButtonArea}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Start Learning"
+              onPress={() => go('onboarding')}
+              style={({ pressed, hovered }) => [
+                styles.referenceCta,
+                { width: posterWidth < 380 ? '88%' : '82%' },
+                (pressed || hovered) && styles.referenceCtaActive
+              ]}
+            >
+              <View style={[styles.playDisc, { width: 54 * ctaScale, height: 54 * ctaScale, borderRadius: 27 * ctaScale }]}>
+                <Feather name="play" size={30 * ctaScale} color={colors.purpleDark} fill={colors.purpleDark} />
+              </View>
+              <KidText style={[styles.referenceCtaText, { fontSize: 28 * ctaScale, lineHeight: 34 * ctaScale }]}>Start Learning</KidText>
+            </Pressable>
+            <View style={styles.splashDots}>
+              {[0, 1, 2, 3].map((dot) => <View key={dot} style={[styles.splashDot, dot === 0 && styles.splashDotActive]} />)}
+            </View>
+          </View>
+        </ImageBackground>
+      </View>
+    </LinearGradient>
   );
 }
 
@@ -441,6 +496,139 @@ const styles = StyleSheet.create({
   splash: {
     justifyContent: 'center',
     paddingTop: 28
+  },
+  splashRoot: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  splashPosterWrap: {
+    overflow: 'hidden',
+    backgroundColor: '#5C4EFF'
+  },
+  splashPosterWrapWide: {
+    borderRadius: 36,
+    ...shadow
+  },
+  splashScene: {
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 22,
+    paddingTop: 58,
+    paddingBottom: 24
+  },
+  splashSceneImage: {
+    width: '100%',
+    height: '100%'
+  },
+  musicBubble: {
+    position: 'absolute',
+    top: 42,
+    left: 34,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#FFFFFF',
+    shadowOpacity: 0.8,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 8
+  },
+  logoCluster: {
+    alignItems: 'center'
+  },
+  kidwriteLogo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 4
+  },
+  logoLetter: {
+    fontSize: 54,
+    lineHeight: 62,
+    marginHorizontal: -1,
+    textShadowColor: '#FFFFFF',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8
+  },
+  taglineRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: -2,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  taglineWord: {
+    fontSize: 22,
+    lineHeight: 28,
+    fontWeight: '900',
+    textShadowColor: 'rgba(72,42,171,0.36)',
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 4
+  },
+  splashButtonArea: {
+    width: '100%',
+    alignItems: 'center',
+    gap: 14
+  },
+  referenceCta: {
+    width: '82%',
+    maxWidth: 390,
+    minHeight: 82,
+    borderRadius: 42,
+    backgroundColor: '#FFD84D',
+    borderWidth: 4,
+    borderColor: 'rgba(255,255,255,0.72)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 18,
+    shadowColor: '#B96F1D',
+    shadowOpacity: 0.32,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 11 },
+    elevation: 12
+  },
+  referenceCtaActive: {
+    transform: [{ translateY: 2 }, { scale: 0.985 }],
+    shadowOpacity: 0.22
+  },
+  playDisc: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: 'rgba(255,255,255,0.88)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  referenceCtaText: {
+    color: colors.purpleDark,
+    fontSize: 28,
+    lineHeight: 34,
+    fontWeight: '900',
+    textShadowColor: 'rgba(255,255,255,0.45)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 2
+  },
+  splashDots: {
+    flexDirection: 'row',
+    gap: 9,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  splashDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: 'rgba(255,255,255,0.86)'
+  },
+  splashDotActive: {
+    backgroundColor: colors.purple
   },
   splashPanel: {
     minHeight: '92%',

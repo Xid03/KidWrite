@@ -53,4 +53,9 @@ The Firebase entry point is `src/services/firebase.js`. Collections are listed i
 
 ## Asset Workflow
 
-The mascot was generated with the local `imagegen` skill and copied into the workspace as `assets/mascot-pencil.png`. Additional bitmap-only assets should be generated the same way, then committed under `assets/` before use in code.
+The mascot and the reference-style splash scene were generated with the local `imagegen` skill and copied into the workspace:
+
+- `assets/mascot-pencil.png`
+- `assets/splash-fantasy.png`
+
+Additional bitmap-only assets should be generated the same way, then committed under `assets/` before use in code.
