@@ -68,11 +68,7 @@ function HomeMenuTile({ item, onPress, scale = 1 }) {
               <KidText style={[styles.iconLetter, { color: '#B85BFF', right: 4, top: 2, transform: [{ rotate: '8deg' }] }]}>C</KidText>
             </View>
           ) : item.key === 'numbers' ? (
-            <View style={styles.numberIcon}>
-              <KidText style={[styles.numberGlyph, { color: '#28A7FF' }]}>1</KidText>
-              <KidText style={[styles.numberGlyph, { color: '#FFD33D' }]}>2</KidText>
-              <KidText style={[styles.numberGlyph, { color: '#4DD45F' }]}>3</KidText>
-            </View>
+            <Image source={require('../../assets/home-number-123.png')} resizeMode="contain" style={styles.homeNumberAsset} />
           ) : item.key === 'words' ? (
             <View style={styles.wordIcon}>
               <KidText style={styles.wordCatIcon}>CAT</KidText>
@@ -1014,19 +1010,9 @@ const styles = StyleSheet.create({
     lineHeight: 28,
     fontWeight: '900'
   },
-  numberIcon: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 7
-  },
-  numberGlyph: {
-    fontSize: 38,
-    lineHeight: 44,
-    fontWeight: '900',
-    textShadowColor: 'rgba(21,17,87,0.14)',
-    textShadowOffset: { width: 0, height: 3 },
-    textShadowRadius: 4
+  homeNumberAsset: {
+    width: 92,
+    height: 52
   },
   wordIcon: {
     minWidth: 62,
