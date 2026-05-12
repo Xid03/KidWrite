@@ -174,7 +174,6 @@ export function OnboardingScreen({ go }) {
 
   return (
     <ScreenScaffold scroll={false} bottomInset={false} style={styles.onboardingRoot}>
-      <FloatingDecor />
       <View style={[styles.onboardingSingleCard, { width: cardWidth, minHeight: cardHeight }]}>
         <KidText variant="title" style={styles.onboardingSingleTitle}>{title}</KidText>
         <View style={styles.onboardingSingleArt}>
