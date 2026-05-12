@@ -328,7 +328,11 @@ export function HomeScreen({ go }) {
   const cols = isTablet ? 3 : 2;
   const contentMaxWidth = isDesktop ? 980 : isTablet ? Math.min(width - 48, 860) : 620;
   return (
-    <ScreenScaffold style={[styles.homeScreenInner, { maxWidth: contentMaxWidth, gap: isTablet ? 18 : 14, paddingTop: isTablet ? 42 : 36 }]}>
+    <ScreenScaffold
+      backgroundSource={require('../../assets/home-background-pastel.png')}
+      showDecor={false}
+      style={[styles.homeScreenInner, { maxWidth: contentMaxWidth, gap: isTablet ? 18 : 14, paddingTop: isTablet ? 42 : 36 }]}
+    >
       <View style={[styles.homeTopRow, { minHeight: 54 * homeScale }]}>
         <View style={[styles.homeAvatar, { width: 48 * homeScale, height: 48 * homeScale, borderRadius: 24 * homeScale }]}>
           <Image source={require('../../assets/app-icon.png')} resizeMode="cover" style={styles.homeAvatarImage} />

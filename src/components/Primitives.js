@@ -22,14 +22,17 @@ export function KidText({ children, style, variant = 'body', ...props }) {
   );
 }
 
-export function ScreenScaffold({ children, bottomInset = true, scroll = true, style }) {
+export function ScreenScaffold({ children, bottomInset = true, scroll = true, style, backgroundSource, showDecor = true }) {
   const { width } = useWindowDimensions();
   const content = (
     <View style={[styles.screenInner, width >= 900 && styles.screenInnerWide, style]}>{children}</View>
   );
   return (
     <LinearGradient colors={['#F9FBFF', '#EAF6FF', '#F6EFFF']} style={styles.screen}>
-      <FloatingDecor />
+      {backgroundSource ? (
+        <ImageBackground source={backgroundSource} resizeMode="cover" style={StyleSheet.absoluteFill} />
+      ) : null}
+      {showDecor ? <FloatingDecor /> : null}
       {scroll ? (
         <Animated.ScrollView
           showsVerticalScrollIndicator={false}
