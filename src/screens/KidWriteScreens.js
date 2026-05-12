@@ -173,7 +173,7 @@ export function OnboardingScreen({ go }) {
   const next = () => (index === onboarding.length - 1 ? go('home') : setIndex(index + 1));
 
   return (
-    <LinearGradient colors={['#F7F8FF', '#EFF8FF', '#F7F1FF']} style={styles.onboardingRoot}>
+    <ScreenScaffold scroll={false} bottomInset={false} style={styles.onboardingRoot}>
       <FloatingDecor />
       <View style={[styles.onboardingSingleCard, { width: cardWidth, minHeight: cardHeight }]}>
         <KidText variant="title" style={styles.onboardingSingleTitle}>{title}</KidText>
@@ -205,7 +205,7 @@ export function OnboardingScreen({ go }) {
           </Pressable>
         </View>
       </View>
-    </LinearGradient>
+    </ScreenScaffold>
   );
 }
 
@@ -705,6 +705,8 @@ const styles = StyleSheet.create({
   },
   onboardingRoot: {
     flex: 1,
+    width: '100%',
+    minHeight: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 18
