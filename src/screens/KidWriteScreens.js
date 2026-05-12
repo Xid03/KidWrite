@@ -70,9 +70,7 @@ function HomeMenuTile({ item, onPress, scale = 1 }) {
           ) : item.key === 'numbers' ? (
             <Image source={require('../../assets/home-number-123.png')} resizeMode="contain" style={styles.homeNumberAsset} />
           ) : item.key === 'words' ? (
-            <View style={styles.wordIcon}>
-              <KidText style={styles.wordCatIcon}>CAT</KidText>
-            </View>
+            <Image source={require('../../assets/home-word-cat.png')} resizeMode="contain" style={styles.homeWordAsset} />
           ) : item.key === 'games' ? (
             <Feather name="zap" size={40} color="#5B4BEE" />
           ) : item.key === 'practice' ? (
@@ -1014,21 +1012,9 @@ const styles = StyleSheet.create({
     width: 92,
     height: 52
   },
-  wordIcon: {
-    minWidth: 62,
-    minHeight: 38,
-    borderRadius: 10,
-    backgroundColor: '#FFF7EC',
-    borderWidth: 2,
-    borderColor: '#F5D8C5',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  wordCatIcon: {
-    color: colors.purple,
-    fontSize: 22,
-    lineHeight: 26,
-    fontWeight: '900'
+  homeWordAsset: {
+    width: 104,
+    height: 58
   },
   topRow: {
     flexDirection: 'row',
