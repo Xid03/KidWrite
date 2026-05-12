@@ -202,10 +202,12 @@ export function OnboardingScreen({ go }) {
               accessibilityLabel="Traceable number 3 with three ducklings"
             />
           ) : (
-            <>
-              <LetterTraceArt text="CAT" accent="#FF79C8" size={artSize * 1.02} />
-              <View style={styles.onboardingSingleCat}><CatArt size={artSize * 0.58} /></View>
-            </>
+            <Image
+              source={require('../../assets/onboarding-word-cat.png')}
+              resizeMode="contain"
+              style={[styles.onboardingGeneratedArt, { width: artSize * 1.08, height: artSize * 1.08 }]}
+              accessibilityLabel="Traceable word CAT with a cute kitten"
+            />
           )}
         </View>
         <KidText style={[styles.onboardingSingleCopy, { fontSize: 18 * cardScale, lineHeight: 24 * cardScale, maxWidth: 250 * cardScale }]}>{slide.subtitle}</KidText>

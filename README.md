@@ -60,5 +60,6 @@ The mascot and the reference-style splash scene were generated with the local `i
 - `assets/onboarding-fantasy.png`
 - `assets/onboarding-letter-apple.png`
 - `assets/onboarding-number-ducks.png`
+- `assets/onboarding-word-cat.png`
 
 Additional bitmap-only assets should be generated the same way, then committed under `assets/` before use in code.
