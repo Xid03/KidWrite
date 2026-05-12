@@ -274,17 +274,13 @@ export function HomeScreen({ go }) {
         </View>
       </View>
 
-      <ImageBackground
-        source={require('../../assets/home-continue-banner.png')}
-        resizeMode="cover"
-        imageStyle={styles.homeContinueBannerImage}
-        style={[styles.homeContinueCard, isTablet && styles.homeContinueCardWide, { minHeight: isTablet ? 218 : 124 }]}
-      >
+      <LinearGradient colors={['#278BFF', '#5CD8F2']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.homeContinueCard, isTablet && styles.homeContinueCardWide, { minHeight: isTablet ? 218 : 124 }]}>
         <View style={[styles.homeContinueTextBlock, { maxWidth: isTablet ? '48%' : '58%' }]}>
           <KidText style={[styles.homeContinueTitle, { fontSize: (isTablet ? 26 : 20), lineHeight: (isTablet ? 32 : 25) }]}>Let’s continue</KidText>
           <KidText style={[styles.homeContinueSubtitle, { fontSize: (isTablet ? 19 : 15), lineHeight: (isTablet ? 25 : 20) }]}>your learning journey!</KidText>
         </View>
-      </ImageBackground>
+        <Image source={require('../../assets/home-continue-reader-blend.png')} resizeMode="contain" style={[styles.homeContinueReader, isTablet && styles.homeContinueReaderWide]} />
+      </LinearGradient>
 
       <View style={styles.homeGrid}>
         {menuItems.map((item) => (
@@ -924,9 +920,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.55)',
     ...shadow
   },
-  homeContinueBannerImage: {
-    borderRadius: 22
-  },
   homeContinueCardWide: {
     minHeight: 168,
     paddingLeft: 24,
@@ -947,6 +940,19 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 20,
     fontWeight: '800'
+  },
+  homeContinueReader: {
+    position: 'absolute',
+    right: -2,
+    bottom: -1,
+    width: 192,
+    height: 136
+  },
+  homeContinueReaderWide: {
+    right: -8,
+    bottom: -7,
+    width: 364,
+    height: 258
   },
   homeGrid: {
     flexDirection: 'row',
