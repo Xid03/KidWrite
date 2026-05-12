@@ -386,8 +386,10 @@ export function LettersLearningScreen({ go }) {
   const { width } = useWindowDimensions();
   const { letterCase, setLetterCase, letterProgress, setSelectedLetter, soundEnabled } = useKidWrite();
   const isTablet = width >= 700;
-  const cols = width >= 980 ? 6 : width >= 700 ? 5 : 4;
+  const cols = width >= 1180 ? 6 : width >= 700 ? 5 : 3;
   const currentLetters = letterCase === 'lower' ? alphabet.map((letter) => letter.toLowerCase()) : alphabet;
+  const learnedCount = currentLetters.filter((letter) => (letterProgress[`${letterCase}:${letter}`] || 0) > 0).length;
+  const progressValue = learnedCount / alphabet.length;
   const startLetter = (letter, index, locked) => {
     if (locked) {
       speak('Finish the previous letter first', soundEnabled);
@@ -400,15 +402,30 @@ export function LettersLearningScreen({ go }) {
 
   return (
     <ScreenScaffold style={[styles.lettersScreenInner, { maxWidth: isTablet ? 940 : 620 }]}>
-      <HeaderBar title="Learn Letters" onBack={() => go('home')} rightIcon="volume-2" onRight={() => speak(letterCase === 'lower' ? 'Lowercase letters' : 'Uppercase letters', soundEnabled)} />
+      <View style={styles.lettersHeader}>
+        <IconCircle icon="arrow-left" onPress={() => go('home')} label="Go back" color={colors.purple} />
+        <View style={styles.lettersTitleWrap}>
+          <View style={styles.lettersTitleRow}>
+            <Feather name="star" size={28} color={colors.yellow} fill={colors.yellow} />
+            <KidText style={styles.lettersHeaderTitle}>Learn Letters</KidText>
+            <Feather name="star" size={28} color={colors.yellow} fill={colors.yellow} />
+          </View>
+          <View style={styles.lettersTitleUnderline} />
+        </View>
+        <IconCircle icon="volume-2" onPress={() => speak(letterCase === 'lower' ? 'Lowercase letters' : 'Uppercase letters', soundEnabled)} label="Hear letters" color={colors.purple} />
+      </View>
+
       <LinearGradient colors={['#7257FF', '#62C8FF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.lettersHero}>
-        <View style={styles.lettersHeroCopy}>
-          <KidText style={styles.lettersHeroTitle}>Pick a letter</KidText>
-          <KidText style={styles.lettersHeroSubtitle}>Trace, listen, and earn stars</KidText>
+        <View style={[styles.lettersHeroCopy, { maxWidth: isTablet ? '52%' : '58%' }]}>
+          <KidText style={[styles.lettersHeroTitle, !isTablet && styles.lettersHeroTitleCompact]}>Pick a letter</KidText>
+          <KidText style={[styles.lettersHeroSubtitle, !isTablet && styles.lettersHeroSubtitleCompact]}>Trace, listen, and earn stars</KidText>
         </View>
-        <View style={styles.lettersHeroBadge}>
-          <KidText style={styles.lettersHeroBadgeText}>A Z</KidText>
+        <View style={[styles.lettersHeroCard, !isTablet && styles.lettersHeroCardCompact]}>
+          <KidText style={[styles.lettersHeroBadgeText, !isTablet && styles.lettersHeroBadgeTextCompact]}>A</KidText>
+          <KidText style={[styles.lettersHeroBadgeText, styles.lettersHeroBadgeTextBlue, !isTablet && styles.lettersHeroBadgeTextCompact]}>Z</KidText>
         </View>
+        <Image source={require('../../assets/home-continue-reader-blend.png')} resizeMode="contain" style={[styles.lettersHeroMascot, !isTablet && styles.lettersHeroMascotCompact]} />
+        <Feather name="star" size={22} color={colors.yellow} fill={colors.yellow} style={styles.lettersHeroStar} />
       </LinearGradient>
 
       <View style={styles.letterTabs} accessibilityRole="tablist">
@@ -449,9 +466,7 @@ export function LettersLearningScreen({ go }) {
                 style={({ pressed }) => [styles.letterCardPress, pressed && !locked && styles.letterCardPressed]}
               >
                 <LinearGradient colors={locked ? ['#F6F7FC', '#EEF0F7'] : ['#FFFFFF', '#F9FBFF']} style={[styles.letterCard, locked && styles.letterCardLocked]}>
-                  <View style={[styles.letterBubble, { backgroundColor: locked ? '#D8DBEA' : accent }]}>
-                    <KidText style={styles.letterBubbleText}>{letter}</KidText>
-                  </View>
+                  <KidText style={[styles.letterCardGlyph, { color: locked ? '#B7A9F1' : accent }]}>{letter}</KidText>
                   <LetterProgressStars earned={stars} size={isTablet ? 17 : 14} />
                   {locked ? (
                     <View style={styles.letterLockPill}>
@@ -464,6 +479,20 @@ export function LettersLearningScreen({ go }) {
           );
         })}
       </View>
+
+      <GlassCard style={styles.lettersProgressCard}>
+        <View style={styles.lettersProgressIcon}>
+          <Feather name="award" size={34} color={colors.yellow} fill={colors.yellow} />
+        </View>
+        <View style={styles.lettersProgressCopy}>
+          <KidText style={styles.lettersProgressTitle}>Your Progress</KidText>
+          <KidText style={styles.lettersProgressMeta}>{learnedCount} / 26 letters learned</KidText>
+        </View>
+        <View style={styles.lettersProgressTrack}>
+          <View style={[styles.lettersProgressFill, { width: `${Math.max(8, progressValue * 100)}%` }]} />
+        </View>
+        <KidText style={styles.lettersProgressPercent}>{Math.round(progressValue * 100)}%</KidText>
+      </GlassCard>
     </ScreenScaffold>
   );
 }
@@ -1226,63 +1255,155 @@ const styles = StyleSheet.create({
     height: 72
   },
   lettersScreenInner: {
-    gap: 16
+    gap: 16,
+    paddingTop: 26
+  },
+  lettersHeader: {
+    minHeight: 72,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 14
+  },
+  lettersTitleWrap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 9
+  },
+  lettersTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 15
+  },
+  lettersHeaderTitle: {
+    color: colors.ink,
+    fontSize: 34,
+    lineHeight: 40,
+    fontWeight: '900',
+    textAlign: 'center'
+  },
+  lettersTitleUnderline: {
+    width: 64,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: colors.purple
   },
   lettersHero: {
-    minHeight: 142,
-    borderRadius: 26,
-    padding: 20,
+    minHeight: 206,
+    borderRadius: 30,
+    padding: 26,
     flexDirection: 'row',
     alignItems: 'center',
     overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.58)',
     ...shadow
   },
   lettersHeroCopy: {
     flex: 1,
-    gap: 4
+    gap: 9,
+    zIndex: 2
   },
   lettersHeroTitle: {
     color: colors.white,
-    fontSize: 28,
-    lineHeight: 34,
-    fontWeight: '900'
+    fontSize: 42,
+    lineHeight: 48,
+    fontWeight: '900',
+    textShadowColor: 'rgba(21,17,87,0.22)',
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 5
+  },
+  lettersHeroTitleCompact: {
+    fontSize: 30,
+    lineHeight: 36
   },
   lettersHeroSubtitle: {
     color: 'rgba(255,255,255,0.92)',
-    fontSize: 16,
-    lineHeight: 22,
-    fontWeight: '800'
+    fontSize: 23,
+    lineHeight: 30,
+    fontWeight: '900'
   },
-  lettersHeroBadge: {
-    width: 96,
-    height: 96,
-    borderRadius: 30,
-    backgroundColor: 'rgba(255,255,255,0.24)',
+  lettersHeroSubtitleCompact: {
+    fontSize: 16,
+    lineHeight: 22
+  },
+  lettersHeroCard: {
+    position: 'absolute',
+    right: 222,
+    bottom: 18,
+    width: 104,
+    height: 132,
+    borderRadius: 18,
+    backgroundColor: '#FFF4EA',
     borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.38)',
+    borderColor: 'rgba(255,255,255,0.82)',
     alignItems: 'center',
     justifyContent: 'center',
-    transform: [{ rotate: '-7deg' }]
+    transform: [{ rotate: '-5deg' }],
+    shadowColor: '#4E34D1',
+    shadowOpacity: 0.22,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 7 },
+    elevation: 5,
+    zIndex: 2
+  },
+  lettersHeroCardCompact: {
+    right: 110,
+    bottom: 22,
+    width: 72,
+    height: 92,
+    borderRadius: 14
   },
   lettersHeroBadgeText: {
-    color: colors.white,
-    fontSize: 34,
-    lineHeight: 40,
+    color: colors.purple,
+    fontSize: 46,
+    lineHeight: 48,
     fontWeight: '900'
+  },
+  lettersHeroBadgeTextCompact: {
+    fontSize: 31,
+    lineHeight: 33
+  },
+  lettersHeroBadgeTextBlue: {
+    color: '#28A7FF',
+    marginTop: -4
+  },
+  lettersHeroMascot: {
+    position: 'absolute',
+    right: -16,
+    bottom: -24,
+    width: 310,
+    height: 220,
+    zIndex: 1
+  },
+  lettersHeroMascotCompact: {
+    right: -18,
+    bottom: -12,
+    width: 190,
+    height: 136
+  },
+  lettersHeroStar: {
+    position: 'absolute',
+    left: 18,
+    bottom: 24,
+    transform: [{ rotate: '-14deg' }]
   },
   letterTabs: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 0,
     padding: 6,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.72)',
+    borderRadius: 46,
+    backgroundColor: 'rgba(255,255,255,0.92)',
     borderWidth: 1,
-    borderColor: 'rgba(114,87,255,0.12)'
+    borderColor: 'rgba(114,87,255,0.12)',
+    ...shadow
   },
   letterTab: {
     flex: 1,
-    minHeight: 70,
-    borderRadius: 19,
+    minHeight: 90,
+    borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 2
@@ -1296,15 +1417,15 @@ const styles = StyleSheet.create({
     elevation: 4
   },
   letterTabSample: {
-    color: colors.purple,
-    fontSize: 24,
-    lineHeight: 28,
+    color: colors.ink,
+    fontSize: 34,
+    lineHeight: 40,
     fontWeight: '900'
   },
   letterTabLabel: {
     color: colors.ink,
-    fontSize: 13,
-    lineHeight: 17,
+    fontSize: 18,
+    lineHeight: 23,
     fontWeight: '900'
   },
   letterTabTextActive: {
@@ -1322,13 +1443,13 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.965 }]
   },
   letterCard: {
-    minHeight: 118,
+    minHeight: 154,
     borderRadius: 22,
     borderWidth: 1,
     borderColor: 'rgba(114,87,255,0.12)',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 9,
+    gap: 13,
     shadowColor: '#6A5EE8',
     shadowOpacity: 0.12,
     shadowRadius: 14,
@@ -1338,23 +1459,13 @@ const styles = StyleSheet.create({
   letterCardLocked: {
     opacity: 0.72
   },
-  letterBubble: {
-    width: 58,
-    height: 58,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#4430B2',
-    shadowOpacity: 0.22,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 3
-  },
-  letterBubbleText: {
-    color: colors.white,
-    fontSize: 34,
-    lineHeight: 40,
-    fontWeight: '900'
+  letterCardGlyph: {
+    fontSize: 74,
+    lineHeight: 82,
+    fontWeight: '900',
+    textShadowColor: 'rgba(21,17,87,0.18)',
+    textShadowOffset: { width: 0, height: 5 },
+    textShadowRadius: 5
   },
   letterStars: {
     flexDirection: 'row',
@@ -1366,12 +1477,70 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     right: 10,
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: 'rgba(255,255,255,0.78)',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#6A5EE8',
+    shadowOpacity: 0.12,
+    shadowRadius: 7,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3
+  },
+  lettersProgressCard: {
+    minHeight: 96,
+    borderRadius: 26,
+    padding: 18,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    flexWrap: 'wrap'
+  },
+  lettersProgressIcon: {
+    width: 58,
+    height: 58,
+    borderRadius: 20,
+    backgroundColor: '#FFF5CB',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  lettersProgressCopy: {
+    flex: 1,
+    minWidth: 118
+  },
+  lettersProgressTitle: {
+    color: colors.ink,
+    fontSize: 20,
+    lineHeight: 25,
+    fontWeight: '900'
+  },
+  lettersProgressMeta: {
+    color: colors.muted,
+    fontSize: 15,
+    lineHeight: 20,
+    fontWeight: '800'
+  },
+  lettersProgressTrack: {
+    flex: 1,
+    flexBasis: 120,
+    minWidth: 90,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#E8E5FF',
+    overflow: 'hidden'
+  },
+  lettersProgressFill: {
+    height: '100%',
+    borderRadius: 11,
+    backgroundColor: colors.purple
+  },
+  lettersProgressPercent: {
+    color: colors.purple,
+    fontSize: 22,
+    lineHeight: 28,
+    fontWeight: '900'
   },
   topRow: {
     flexDirection: 'row',

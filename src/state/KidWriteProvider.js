@@ -13,7 +13,8 @@ export function KidWriteProvider({ children }) {
   const [letterProgress, setLetterProgress] = useState({
     'upper:A': 2,
     'upper:B': 1,
-    'upper:C': 1,
+    'upper:C': 2,
+    'upper:D': 3,
     'lower:a': 1
   });
 
