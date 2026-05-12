@@ -39,12 +39,12 @@ const routesWithTabs = new Set(['home', 'progress', 'rewards', 'profile']);
 
 export function AppNavigator() {
   const { screen, setScreen } = useKidWrite();
-  const opacity = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
   const Screen = routeMap[screen] || HomeScreen;
 
   useEffect(() => {
     opacity.setValue(0);
-    Animated.timing(opacity, { toValue: 1, duration: 260, useNativeDriver: true }).start();
+    Animated.timing(opacity, { toValue: 1, duration: 180, useNativeDriver: false }).start();
   }, [opacity, screen]);
 
   return (
