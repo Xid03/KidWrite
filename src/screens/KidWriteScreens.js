@@ -168,13 +168,23 @@ export function SplashScreen({ go }) {
 export function OnboardingScreen({ go }) {
   const [index, setIndex] = useState(0);
   const { width, height } = useWindowDimensions();
-  const isCompact = width < 560;
   const isTablet = width >= 760 || height >= 1000;
-  const stageWidth = Math.min(width - 28, isTablet ? 1180 : 960);
-  const cardGap = isCompact ? 8 : 22;
-  const cardWidth = Math.max(150, Math.min(isTablet ? 330 : 285, (stageWidth - cardGap * 2) / 3));
-  const artSize = Math.max(120, Math.min(isTablet ? 250 : 210, cardWidth * 0.78));
+  const isDesktop = width >= 1180;
+  const safeWidth = Math.max(300, width);
+  const stageWidth = Math.min(safeWidth - 32, isDesktop ? 1120 : isTablet ? 980 : 900);
+  const cardGap = Math.max(6, Math.min(isTablet ? 22 : 14, stageWidth * 0.018));
+  const cardWidth = (stageWidth - cardGap * 2) / 3;
+  const cardScale = Math.max(0.43, Math.min(1.08, cardWidth / 305));
+  const cardHeight = Math.max(height * 0.32, Math.min(isTablet ? 560 : 470, cardWidth * 1.82));
+  const artSize = Math.max(86, Math.min(isTablet ? 250 : 210, cardWidth * 0.86));
+  const cardPadding = Math.max(7, 18 * cardScale);
+  const titleFontSize = Math.max(15, 27 * cardScale);
+  const titleLineHeight = Math.max(19, 32 * cardScale);
+  const copyFontSize = Math.max(11, 19 * cardScale);
+  const copyLineHeight = Math.max(14, 24 * cardScale);
+  const badgeSize = Math.max(40, 72 * cardScale);
   const logoScale = Math.max(0.72, Math.min(isTablet ? 1.18 : 0.98, width / 900));
+  const footerButtonWidth = Math.min(Math.max(220, stageWidth * 0.34), 320);
   const next = () => (index === onboarding.length - 1 ? go('home') : setIndex(index + 1));
   const cardThemes = [
     { titleColor: '#E95F18', badge: '#FFD43D', bg: ['rgba(255,249,218,0.98)', 'rgba(255,238,164,0.93)'] },
@@ -225,12 +235,27 @@ export function OnboardingScreen({ go }) {
                 onPress={() => setIndex(itemIndex)}
                 style={[styles.onboardingLessonPress, { width: cardWidth }, isActive && styles.onboardingLessonActive]}
               >
-                <LinearGradient colors={theme.bg} style={[styles.onboardingLessonCard, itemIndex === 0 && styles.lessonCardWarm, itemIndex === 1 && styles.lessonCardCool, itemIndex === 2 && styles.lessonCardPink]}>
-                  <View style={[styles.lessonNumberBadge, { backgroundColor: theme.badge }]}>
-                    <KidText style={styles.lessonNumberText}>{itemIndex + 1}</KidText>
+                <LinearGradient
+                  colors={theme.bg}
+                  style={[
+                    styles.onboardingLessonCard,
+                    {
+                      height: cardHeight,
+                      borderRadius: 34 * cardScale,
+                      paddingHorizontal: cardPadding,
+                      paddingTop: Math.max(30, 42 * cardScale),
+                      paddingBottom: Math.max(12, 24 * cardScale)
+                    },
+                    itemIndex === 0 && styles.lessonCardWarm,
+                    itemIndex === 1 && styles.lessonCardCool,
+                    itemIndex === 2 && styles.lessonCardPink
+                  ]}
+                >
+                  <View style={[styles.lessonNumberBadge, { backgroundColor: theme.badge, width: badgeSize, height: badgeSize, borderRadius: badgeSize / 2, top: -badgeSize * 0.36 }]}>
+                    <KidText style={[styles.lessonNumberText, { fontSize: 30 * cardScale, lineHeight: 36 * cardScale }]}>{itemIndex + 1}</KidText>
                   </View>
-                  <KidText variant="title" style={[styles.onboardingLessonTitle, { color: theme.titleColor }]}>{item.title}</KidText>
-                  <View style={styles.onboardingLessonArt}>
+                  <KidText variant="title" style={[styles.onboardingLessonTitle, { color: theme.titleColor, fontSize: titleFontSize, lineHeight: titleLineHeight }]}>{item.title}</KidText>
+                  <View style={[styles.onboardingLessonArt, { minHeight: Math.max(118, cardHeight * 0.45) }]}>
                     {itemIndex === 0 ? (
                       <>
                         <LetterTraceArt text="A" accent="#FF5B57" size={artSize} />
@@ -248,7 +273,7 @@ export function OnboardingScreen({ go }) {
                       </>
                     )}
                   </View>
-                  <KidText style={[styles.onboardingLessonCopy, { color: theme.titleColor }]}>{item.subtitle}</KidText>
+                  <KidText style={[styles.onboardingLessonCopy, { color: theme.titleColor, fontSize: copyFontSize, lineHeight: copyLineHeight }]}>{item.subtitle}</KidText>
                 </LinearGradient>
               </Pressable>
             );
@@ -256,7 +281,7 @@ export function OnboardingScreen({ go }) {
         </View>
 
         <View style={styles.onboardingFooter}>
-          <PrimaryButton title={index === onboarding.length - 1 ? 'Let’s Go' : 'Next'} icon="arrow-right" variant="yellow" onPress={next} style={styles.onboardingNextButton} />
+          <PrimaryButton title={index === onboarding.length - 1 ? 'Let’s Go' : 'Next'} icon="arrow-right" variant="yellow" onPress={next} style={[styles.onboardingNextButton, { minWidth: footerButtonWidth }]} />
           <View style={styles.splashDots}>
             {onboarding.map((_, dot) => <View key={dot} style={[styles.splashDot, dot === index && styles.splashDotActive]} />)}
           </View>
@@ -797,7 +822,6 @@ const styles = StyleSheet.create({
     transform: [{ translateY: -8 }, { scale: 1.025 }]
   },
   onboardingLessonCard: {
-    minHeight: 430,
     height: '100%',
     borderRadius: 34,
     borderWidth: 4,
