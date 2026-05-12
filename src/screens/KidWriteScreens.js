@@ -166,17 +166,27 @@ export function OnboardingScreen({ go }) {
   const [index, setIndex] = useState(0);
   const { width, height } = useWindowDimensions();
   const slide = onboarding[index];
-  const cardWidth = Math.min(Math.max(width * 0.84, 260), height > width ? 390 : 440);
-  const cardHeight = Math.min(Math.max(height * 0.72, 540), 680);
-  const artSize = Math.min(cardWidth * 0.84, 292);
+  const isTablet = width >= 700 || height >= 980;
+  const isDesktop = width >= 1180;
+  const cardWidth = Math.min(
+    Math.max(width * (isDesktop ? 0.38 : isTablet ? 0.62 : 0.84), 260),
+    isDesktop ? 620 : isTablet ? 560 : 420
+  );
+  const cardHeight = Math.min(
+    Math.max(height * (isTablet ? 0.78 : 0.72), isTablet ? 680 : 540),
+    isDesktop ? 820 : isTablet ? 780 : 680
+  );
+  const cardScale = Math.max(1, Math.min(isDesktop ? 1.35 : isTablet ? 1.28 : 1, cardWidth / 390));
+  const artSize = Math.min(cardWidth * 0.82, isTablet ? 390 : 292);
+  const nextSize = 62 * cardScale;
   const title = index === 0 ? 'Learn to Write\nLetters' : index === 1 ? 'Write Numbers' : 'Learn Words';
   const next = () => (index === onboarding.length - 1 ? go('home') : setIndex(index + 1));
 
   return (
     <ScreenScaffold scroll={false} bottomInset={false} style={styles.onboardingRoot}>
-      <View style={[styles.onboardingSingleCard, { width: cardWidth, minHeight: cardHeight }]}>
-        <KidText variant="title" style={styles.onboardingSingleTitle}>{title}</KidText>
-        <View style={styles.onboardingSingleArt}>
+      <View style={[styles.onboardingSingleCard, { width: cardWidth, minHeight: cardHeight, paddingHorizontal: 28 * cardScale, paddingTop: 34 * cardScale, paddingBottom: 18 * cardScale }]}>
+        <KidText variant="title" style={[styles.onboardingSingleTitle, { fontSize: 27 * cardScale, lineHeight: 34 * cardScale }]}>{title}</KidText>
+        <View style={[styles.onboardingSingleArt, { minHeight: Math.max(300, cardHeight * 0.48) }]}>
           {index === 0 ? (
             <>
               <LetterTraceArt text="A" accent="#FF5B57" size={artSize} />
@@ -194,13 +204,13 @@ export function OnboardingScreen({ go }) {
             </>
           )}
         </View>
-        <KidText style={styles.onboardingSingleCopy}>{slide.subtitle}</KidText>
-        <View style={styles.onboardingSingleFooter}>
+        <KidText style={[styles.onboardingSingleCopy, { fontSize: 18 * cardScale, lineHeight: 24 * cardScale, maxWidth: 250 * cardScale }]}>{slide.subtitle}</KidText>
+        <View style={[styles.onboardingSingleFooter, { minHeight: 56 * cardScale }]}>
           <View style={styles.onboardingSingleDots}>
-            {onboarding.map((_, dot) => <View key={dot} style={[styles.onboardingSingleDot, dot === index && styles.onboardingSingleDotActive]} />)}
+            {onboarding.map((_, dot) => <View key={dot} style={[styles.onboardingSingleDot, { width: 12 * cardScale, height: 12 * cardScale, borderRadius: 6 * cardScale }, dot === index && styles.onboardingSingleDotActive]} />)}
           </View>
-          <Pressable accessibilityRole="button" accessibilityLabel="Next onboarding slide" onPress={next} style={styles.onboardingSingleNext}>
-            <Feather name="arrow-right" size={30} color={colors.white} />
+          <Pressable accessibilityRole="button" accessibilityLabel="Next onboarding slide" onPress={next} style={[styles.onboardingSingleNext, { width: nextSize, height: nextSize, borderRadius: nextSize / 2 }]}>
+            <Feather name="arrow-right" size={30 * cardScale} color={colors.white} />
           </Pressable>
         </View>
       </View>
@@ -708,10 +718,9 @@ const styles = StyleSheet.create({
     minHeight: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 18
+    padding: 14
   },
   onboardingSingleCard: {
-    maxWidth: 420,
     borderRadius: 32,
     backgroundColor: 'rgba(255,255,255,0.98)',
     borderWidth: 1,
