@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import { bottomTabs } from '../data/content';
 import { colors, radius, shadow } from '../theme';
@@ -58,15 +58,18 @@ export function AppNavigator() {
 }
 
 function BottomTabs({ active, setScreen }) {
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 700;
+  const navScale = width >= 1180 ? 1.18 : isTablet ? 1.12 : 1;
   return (
     <View style={styles.tabShell} pointerEvents="box-none">
-      <View style={styles.tabWrap} accessibilityRole="tablist">
+      <View style={[styles.tabWrap, { maxWidth: isTablet ? 860 : 620, minHeight: 72 * navScale, borderRadius: 34 * navScale }]} accessibilityRole="tablist">
         {bottomTabs.map((tab) => {
           const selected = active === tab.key;
           return (
-            <Pressable key={tab.key} accessibilityRole="tab" accessibilityState={{ selected }} onPress={() => setScreen(tab.key)} style={styles.tabButton}>
-              <Feather name={tab.icon} size={23} color={selected ? colors.purple : '#A7ADC1'} />
-              <KidText variant="caption" style={[styles.tabLabel, selected && styles.tabLabelActive]}>{tab.label}</KidText>
+            <Pressable key={tab.key} accessibilityRole="tab" accessibilityState={{ selected }} onPress={() => setScreen(tab.key)} style={[styles.tabButton, { minHeight: 58 * navScale }]}>
+              <Feather name={tab.icon} size={23 * navScale} color={selected ? colors.purple : '#A7ADC1'} />
+              <KidText variant="caption" style={[styles.tabLabel, { fontSize: 10 * navScale }, selected && styles.tabLabelActive]}>{tab.label}</KidText>
             </Pressable>
           );
         })}

@@ -56,11 +56,11 @@ function ObjectGroup({ count = 5 }) {
   );
 }
 
-function HomeMenuTile({ item, onPress }) {
+function HomeMenuTile({ item, onPress, scale = 1 }) {
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={item.label} onPress={onPress} style={styles.homeTilePress}>
-      <LinearGradient colors={['#FFFFFF', '#F9FBFF']} style={styles.homeTile}>
-        <View style={styles.homeTileIconWrap}>
+      <LinearGradient colors={['#FFFFFF', '#F9FBFF']} style={[styles.homeTile, { minHeight: 124 * scale, borderRadius: 18 * scale, gap: 8 * scale }]}>
+        <View style={[styles.homeTileIconWrap, { minHeight: 52 * scale, transform: [{ scale }] }]}>
           {item.key === 'letters' ? (
             <View style={styles.abcIcon}>
               <KidText style={[styles.iconLetter, { color: '#16C4C8', left: 5, top: 6, transform: [{ rotate: '-8deg' }] }]}>A</KidText>
@@ -85,7 +85,7 @@ function HomeMenuTile({ item, onPress }) {
             <Feather name="award" size={42} color="#FFB833" />
           )}
         </View>
-        <KidText style={styles.homeTileLabel}>{item.label === 'Rewards' ? 'My Rewards' : item.label}</KidText>
+        <KidText style={[styles.homeTileLabel, { fontSize: 14 * scale, lineHeight: 18 * scale }]}>{item.label === 'Rewards' ? 'My Rewards' : item.label}</KidText>
       </LinearGradient>
     </Pressable>
   );
@@ -262,33 +262,36 @@ export function OnboardingScreen({ go }) {
 export function HomeScreen({ go }) {
   const { coins } = useKidWrite();
   const { width } = useWindowDimensions();
-  const isWide = width >= 640;
-  const cols = isWide ? 3 : 2;
+  const isTablet = width >= 700;
+  const isDesktop = width >= 1180;
+  const homeScale = isDesktop ? 1.24 : isTablet ? 1.18 : 1;
+  const cols = isTablet ? 3 : 2;
+  const contentMaxWidth = isDesktop ? 980 : isTablet ? Math.min(width - 48, 860) : 620;
   return (
-    <ScreenScaffold style={styles.homeScreenInner}>
-      <View style={styles.homeTopRow}>
-        <View style={styles.homeAvatar}>
+    <ScreenScaffold style={[styles.homeScreenInner, { maxWidth: contentMaxWidth, gap: isTablet ? 18 : 14, paddingTop: isTablet ? 42 : 36 }]}>
+      <View style={[styles.homeTopRow, { minHeight: 54 * homeScale }]}>
+        <View style={[styles.homeAvatar, { width: 48 * homeScale, height: 48 * homeScale, borderRadius: 24 * homeScale }]}>
           <Image source={require('../../assets/app-icon.png')} resizeMode="cover" style={styles.homeAvatarImage} />
         </View>
-        <KidText style={styles.homeGreeting}>Hi, Emma! 👋</KidText>
-        <View style={styles.homeCoinPill}>
-          <Feather name="star" size={22} color={colors.yellow} fill={colors.yellow} />
-          <KidText style={styles.homeCoinText}>{coins}</KidText>
+        <KidText style={[styles.homeGreeting, { fontSize: 18 * homeScale, lineHeight: 24 * homeScale }]}>Hi, Emma! 👋</KidText>
+        <View style={[styles.homeCoinPill, { minHeight: 42 * homeScale, borderRadius: 21 * homeScale, paddingHorizontal: 14 * homeScale }]}>
+          <Feather name="star" size={22 * homeScale} color={colors.yellow} fill={colors.yellow} />
+          <KidText style={[styles.homeCoinText, { fontSize: 15 * homeScale }]}>{coins}</KidText>
         </View>
       </View>
 
-      <LinearGradient colors={['#5FA9FF', '#6DD7FF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.homeContinueCard, isWide && styles.homeContinueCardWide]}>
+      <LinearGradient colors={['#5FA9FF', '#6DD7FF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.homeContinueCard, isTablet && styles.homeContinueCardWide, { minHeight: isTablet ? 218 : 124 }]}>
         <View style={styles.homeContinueTextBlock}>
-          <KidText style={styles.homeContinueTitle}>Let’s continue</KidText>
-          <KidText style={styles.homeContinueSubtitle}>your learning journey!</KidText>
+          <KidText style={[styles.homeContinueTitle, { fontSize: (isTablet ? 26 : 20), lineHeight: (isTablet ? 32 : 25) }]}>Let’s continue</KidText>
+          <KidText style={[styles.homeContinueSubtitle, { fontSize: (isTablet ? 19 : 15), lineHeight: (isTablet ? 25 : 20) }]}>your learning journey!</KidText>
         </View>
-        <Image source={require('../../assets/mascot-pencil.png')} resizeMode="contain" style={[styles.homeContinueMascot, isWide && styles.homeContinueMascotWide]} />
+        <Image source={require('../../assets/mascot-pencil.png')} resizeMode="contain" style={[styles.homeContinueMascot, isTablet && styles.homeContinueMascotWide]} />
       </LinearGradient>
 
       <View style={styles.homeGrid}>
         {menuItems.map((item) => (
           <View key={item.key} style={{ width: `${100 / cols}%`, padding: 6 }}>
-            <HomeMenuTile item={item} onPress={() => go(item.key === 'letters' ? 'letterTrace' : item.key === 'numbers' ? 'numberTrace' : item.key === 'words' ? 'wordTrace' : item.key === 'games' ? 'game' : item.key === 'rewards' ? 'rewards' : 'category')} />
+            <HomeMenuTile item={item} scale={homeScale} onPress={() => go(item.key === 'letters' ? 'letterTrace' : item.key === 'numbers' ? 'numberTrace' : item.key === 'words' ? 'wordTrace' : item.key === 'games' ? 'game' : item.key === 'rewards' ? 'rewards' : 'category')} />
           </View>
         ))}
       </View>
@@ -950,9 +953,9 @@ const styles = StyleSheet.create({
     marginRight: -8
   },
   homeContinueMascotWide: {
-    width: 210,
-    height: 156,
-    marginRight: -12
+    width: 300,
+    height: 216,
+    marginRight: -18
   },
   homeGrid: {
     flexDirection: 'row',
