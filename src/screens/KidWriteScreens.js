@@ -56,6 +56,9 @@ function ObjectGroup({ count = 5 }) {
   );
 }
 
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const letterColors = ['#7257FF', '#FF6EC7', '#28A7FF', '#34D15F', '#FF9B33', '#B85BFF'];
+
 function HomeMenuTile({ item, onPress, scale = 1 }) {
   const interaction = useRef(new Animated.Value(0)).current;
   const hovered = useRef(false);
@@ -355,9 +358,111 @@ export function HomeScreen({ go }) {
       <View style={styles.homeGrid}>
         {menuItems.map((item) => (
           <View key={item.key} style={{ width: `${100 / cols}%`, padding: 6 }}>
-            <HomeMenuTile item={item} scale={homeScale} onPress={() => go(item.key === 'letters' ? 'letterTrace' : item.key === 'numbers' ? 'numberTrace' : item.key === 'words' ? 'wordTrace' : item.key === 'games' ? 'game' : item.key === 'rewards' ? 'rewards' : 'category')} />
+            <HomeMenuTile item={item} scale={homeScale} onPress={() => go(item.key === 'letters' ? 'letters' : item.key === 'numbers' ? 'numberTrace' : item.key === 'words' ? 'wordTrace' : item.key === 'games' ? 'game' : item.key === 'rewards' ? 'rewards' : 'category')} />
           </View>
         ))}
+      </View>
+    </ScreenScaffold>
+  );
+}
+
+function LetterProgressStars({ earned = 0, size = 15 }) {
+  return (
+    <View style={styles.letterStars}>
+      {[0, 1, 2].map((index) => (
+        <Feather
+          key={index}
+          name="star"
+          size={size}
+          color={index < earned ? colors.yellow : '#D6D9EC'}
+          fill={index < earned ? colors.yellow : 'transparent'}
+        />
+      ))}
+    </View>
+  );
+}
+
+export function LettersLearningScreen({ go }) {
+  const { width } = useWindowDimensions();
+  const { letterCase, setLetterCase, letterProgress, setSelectedLetter, soundEnabled } = useKidWrite();
+  const isTablet = width >= 700;
+  const cols = width >= 980 ? 6 : width >= 700 ? 5 : 4;
+  const currentLetters = letterCase === 'lower' ? alphabet.map((letter) => letter.toLowerCase()) : alphabet;
+  const startLetter = (letter, index, locked) => {
+    if (locked) {
+      speak('Finish the previous letter first', soundEnabled);
+      return;
+    }
+    setSelectedLetter(letter);
+    speak(letter, soundEnabled);
+    go('letterTrace');
+  };
+
+  return (
+    <ScreenScaffold style={[styles.lettersScreenInner, { maxWidth: isTablet ? 940 : 620 }]}>
+      <HeaderBar title="Learn Letters" onBack={() => go('home')} rightIcon="volume-2" onRight={() => speak(letterCase === 'lower' ? 'Lowercase letters' : 'Uppercase letters', soundEnabled)} />
+      <LinearGradient colors={['#7257FF', '#62C8FF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.lettersHero}>
+        <View style={styles.lettersHeroCopy}>
+          <KidText style={styles.lettersHeroTitle}>Pick a letter</KidText>
+          <KidText style={styles.lettersHeroSubtitle}>Trace, listen, and earn stars</KidText>
+        </View>
+        <View style={styles.lettersHeroBadge}>
+          <KidText style={styles.lettersHeroBadgeText}>A Z</KidText>
+        </View>
+      </LinearGradient>
+
+      <View style={styles.letterTabs} accessibilityRole="tablist">
+        {[
+          { key: 'upper', label: 'Uppercase', sample: 'ABC' },
+          { key: 'lower', label: 'Lowercase', sample: 'abc' }
+        ].map((tab) => {
+          const selected = letterCase === tab.key;
+          return (
+            <Pressable
+              key={tab.key}
+              accessibilityRole="tab"
+              accessibilityState={{ selected }}
+              onPress={() => setLetterCase(tab.key)}
+              style={[styles.letterTab, selected && styles.letterTabActive]}
+            >
+              <KidText style={[styles.letterTabSample, selected && styles.letterTabTextActive]}>{tab.sample}</KidText>
+              <KidText style={[styles.letterTabLabel, selected && styles.letterTabTextActive]}>{tab.label}</KidText>
+            </Pressable>
+          );
+        })}
+      </View>
+
+      <View style={styles.lettersGrid}>
+        {currentLetters.map((letter, index) => {
+          const key = `${letterCase}:${letter}`;
+          const previousKey = `${letterCase}:${currentLetters[index - 1]}`;
+          const stars = letterProgress[key] || 0;
+          const locked = index > 0 && !(letterProgress[previousKey] > 0);
+          const accent = letterColors[index % letterColors.length];
+          return (
+            <View key={key} style={{ width: `${100 / cols}%`, padding: 6 }}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`${letterCase === 'lower' ? 'Lowercase' : 'Uppercase'} letter ${letter}`}
+                accessibilityState={{ disabled: locked }}
+                onPress={() => startLetter(letter, index, locked)}
+                style={({ pressed }) => [styles.letterCardPress, pressed && !locked && styles.letterCardPressed]}
+              >
+                <LinearGradient colors={locked ? ['#F6F7FC', '#EEF0F7'] : ['#FFFFFF', '#F9FBFF']} style={[styles.letterCard, locked && styles.letterCardLocked]}>
+                  <View style={[styles.letterBubble, { backgroundColor: locked ? '#D8DBEA' : accent }]}>
+                    <KidText style={styles.letterBubbleText}>{letter}</KidText>
+                  </View>
+                  <LetterProgressStars earned={stars} size={isTablet ? 17 : 14} />
+                  {locked ? (
+                    <View style={styles.letterLockPill}>
+                      <Feather name="lock" size={13} color="#8C93AB" />
+                    </View>
+                  ) : null}
+                </LinearGradient>
+              </Pressable>
+            </View>
+          );
+        })}
       </View>
     </ScreenScaffold>
   );
@@ -372,7 +477,7 @@ export function CategoryScreen({ go }) {
         <CatArt size={120} />
       </GlassCard>
       {categories.map((category) => (
-        <Pressable key={category.key} accessibilityRole="button" onPress={() => go(category.key === 'letters' ? 'letterTrace' : category.key === 'numbers' ? 'numberTrace' : 'wordTrace')}>
+        <Pressable key={category.key} accessibilityRole="button" onPress={() => go(category.key === 'letters' ? 'letters' : category.key === 'numbers' ? 'numberTrace' : 'wordTrace')}>
           <LinearGradient colors={category.colors} style={styles.categoryCard}>
             <KidText variant="hero" style={styles.categoryIcon}>{category.icon}</KidText>
             <View style={{ flex: 1 }}>
@@ -388,24 +493,32 @@ export function CategoryScreen({ go }) {
 }
 
 export function LetterTracingScreen({ go }) {
-  const { soundEnabled, setCoins } = useKidWrite();
+  const { soundEnabled, setCoins, selectedLetter, letterCase, letterProgress, completeLetter } = useKidWrite();
   const [completed, setCompleted] = useState(false);
+  const traceLetter = letterCase === 'lower' ? selectedLetter.toLowerCase() : selectedLetter.toUpperCase();
+  const currentStars = letterProgress[`${letterCase}:${traceLetter}`] || 0;
+  const exampleText = traceLetter.toUpperCase() === 'A' ? `${traceLetter} is for Apple` : `Trace letter ${traceLetter}`;
+  const completeTrace = () => {
+    setCompleted(true);
+    completeLetter(traceLetter, letterCase, 3);
+    setCoins((value) => value + 5);
+  };
   return (
     <ScreenScaffold>
-      <HeaderBar title="Letter A" onBack={() => go('home')} onRight={() => speak('A is for apple', soundEnabled)} />
-      <StarRow earned={completed ? 3 : 1} />
+      <HeaderBar title={`Letter ${traceLetter}`} onBack={() => go('letters')} onRight={() => speak(traceLetter, soundEnabled)} />
+      <StarRow earned={completed ? 3 : currentStars} />
       <GlassCard style={styles.traceCard}>
-        <TracePad onComplete={() => { setCompleted(true); setCoins((value) => value + 5); }}>
+        <TracePad onComplete={completeTrace}>
           <View style={styles.traceContent}>
-            <LetterTraceArt text="A" size={260} />
+            <LetterTraceArt text={traceLetter} size={260} />
             <View style={styles.exampleBlock}>
               <AppleArt size={112} />
-              <KidText variant="section" style={styles.center}>A is for Apple</KidText>
+              <KidText variant="section" style={styles.center}>{exampleText}</KidText>
             </View>
           </View>
         </TracePad>
       </GlassCard>
-      <LessonActions onReplay={() => setCompleted(false)} onSpeak={() => speak('A. Apple.', soundEnabled)} onNext={() => go('numberTrace')} />
+      <LessonActions onReplay={() => setCompleted(false)} onSpeak={() => speak(traceLetter, soundEnabled)} onNext={() => go('letters')} />
     </ScreenScaffold>
   );
 }
@@ -1111,6 +1224,154 @@ const styles = StyleSheet.create({
   homeRewardAsset: {
     width: 94,
     height: 72
+  },
+  lettersScreenInner: {
+    gap: 16
+  },
+  lettersHero: {
+    minHeight: 142,
+    borderRadius: 26,
+    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    overflow: 'hidden',
+    ...shadow
+  },
+  lettersHeroCopy: {
+    flex: 1,
+    gap: 4
+  },
+  lettersHeroTitle: {
+    color: colors.white,
+    fontSize: 28,
+    lineHeight: 34,
+    fontWeight: '900'
+  },
+  lettersHeroSubtitle: {
+    color: 'rgba(255,255,255,0.92)',
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: '800'
+  },
+  lettersHeroBadge: {
+    width: 96,
+    height: 96,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255,255,255,0.24)',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.38)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transform: [{ rotate: '-7deg' }]
+  },
+  lettersHeroBadgeText: {
+    color: colors.white,
+    fontSize: 34,
+    lineHeight: 40,
+    fontWeight: '900'
+  },
+  letterTabs: {
+    flexDirection: 'row',
+    gap: 10,
+    padding: 6,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255,255,255,0.72)',
+    borderWidth: 1,
+    borderColor: 'rgba(114,87,255,0.12)'
+  },
+  letterTab: {
+    flex: 1,
+    minHeight: 70,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2
+  },
+  letterTabActive: {
+    backgroundColor: colors.purple,
+    shadowColor: '#6A5EE8',
+    shadowOpacity: 0.22,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 7 },
+    elevation: 4
+  },
+  letterTabSample: {
+    color: colors.purple,
+    fontSize: 24,
+    lineHeight: 28,
+    fontWeight: '900'
+  },
+  letterTabLabel: {
+    color: colors.ink,
+    fontSize: 13,
+    lineHeight: 17,
+    fontWeight: '900'
+  },
+  letterTabTextActive: {
+    color: colors.white
+  },
+  lettersGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: -6
+  },
+  letterCardPress: {
+    flex: 1
+  },
+  letterCardPressed: {
+    transform: [{ scale: 0.965 }]
+  },
+  letterCard: {
+    minHeight: 118,
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: 'rgba(114,87,255,0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 9,
+    shadowColor: '#6A5EE8',
+    shadowOpacity: 0.12,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 4
+  },
+  letterCardLocked: {
+    opacity: 0.72
+  },
+  letterBubble: {
+    width: 58,
+    height: 58,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#4430B2',
+    shadowOpacity: 0.22,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 3
+  },
+  letterBubbleText: {
+    color: colors.white,
+    fontSize: 34,
+    lineHeight: 40,
+    fontWeight: '900'
+  },
+  letterStars: {
+    flexDirection: 'row',
+    gap: 3,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  letterLockPill: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: 'rgba(255,255,255,0.78)',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   topRow: {
     flexDirection: 'row',
