@@ -274,13 +274,17 @@ export function HomeScreen({ go }) {
         </View>
       </View>
 
-      <LinearGradient colors={['#5FA9FF', '#6DD7FF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.homeContinueCard, isTablet && styles.homeContinueCardWide, { minHeight: isTablet ? 218 : 124 }]}>
+      <ImageBackground
+        source={require('../../assets/home-continue-banner.png')}
+        resizeMode="cover"
+        imageStyle={styles.homeContinueBannerImage}
+        style={[styles.homeContinueCard, isTablet && styles.homeContinueCardWide, { minHeight: isTablet ? 218 : 124 }]}
+      >
         <View style={styles.homeContinueTextBlock}>
           <KidText style={[styles.homeContinueTitle, { fontSize: (isTablet ? 26 : 20), lineHeight: (isTablet ? 32 : 25) }]}>Let’s continue</KidText>
           <KidText style={[styles.homeContinueSubtitle, { fontSize: (isTablet ? 19 : 15), lineHeight: (isTablet ? 25 : 20) }]}>your learning journey!</KidText>
         </View>
-        <Image source={require('../../assets/mascot-pencil.png')} resizeMode="contain" style={[styles.homeContinueMascot, isTablet && styles.homeContinueMascotWide]} />
-      </LinearGradient>
+      </ImageBackground>
 
       <View style={styles.homeGrid}>
         {menuItems.map((item) => (
@@ -912,7 +916,7 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     paddingLeft: 18,
     paddingVertical: 16,
-    paddingRight: 6,
+    paddingRight: 18,
     flexDirection: 'row',
     alignItems: 'center',
     overflow: 'hidden',
@@ -920,10 +924,13 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.55)',
     ...shadow
   },
+  homeContinueBannerImage: {
+    borderRadius: 22
+  },
   homeContinueCardWide: {
     minHeight: 168,
     paddingLeft: 24,
-    paddingRight: 12
+    paddingRight: 24
   },
   homeContinueTextBlock: {
     flex: 1,
