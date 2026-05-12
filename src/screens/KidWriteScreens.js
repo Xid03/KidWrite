@@ -57,30 +57,96 @@ function ObjectGroup({ count = 5 }) {
 }
 
 function HomeMenuTile({ item, onPress, scale = 1 }) {
+  const interaction = useRef(new Animated.Value(0)).current;
+  const hovered = useRef(false);
+  const animateTile = (toValue) => {
+    Animated.spring(interaction, {
+      toValue,
+      speed: 22,
+      bounciness: 8,
+      useNativeDriver: false
+    }).start();
+  };
+  const tileAnimatedStyle = {
+    shadowOpacity: interaction.interpolate({
+      inputRange: [-0.45, 0, 1],
+      outputRange: [0.12, 0.12, 0.26]
+    }),
+    shadowRadius: interaction.interpolate({
+      inputRange: [-0.45, 0, 1],
+      outputRange: [10, 14, 22]
+    }),
+    shadowOffset: {
+      width: 0,
+      height: interaction.interpolate({
+        inputRange: [-0.45, 0, 1],
+        outputRange: [5, 8, 13]
+      })
+    },
+    transform: [
+      {
+        translateY: interaction.interpolate({
+          inputRange: [-0.45, 0, 1],
+          outputRange: [2, 0, -4]
+        })
+      },
+      {
+        scale: interaction.interpolate({
+          inputRange: [-0.45, 0, 1],
+          outputRange: [0.975, 1, 1.045]
+        })
+      }
+    ]
+  };
+  const glowStyle = {
+    opacity: interaction.interpolate({
+      inputRange: [-0.45, 0, 1],
+      outputRange: [0, 0, 1]
+    })
+  };
+
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={item.label} onPress={onPress} style={styles.homeTilePress}>
-      <LinearGradient colors={['#FFFFFF', '#F9FBFF']} style={[styles.homeTile, { minHeight: 124 * scale, borderRadius: 18 * scale, gap: 8 * scale }]}>
-        <View style={[styles.homeTileIconWrap, { minHeight: 52 * scale, transform: [{ scale }] }]}>
-          {item.key === 'letters' ? (
-            <View style={styles.abcIcon}>
-              <KidText style={[styles.iconLetter, { color: '#16C4C8', left: 5, top: 6, transform: [{ rotate: '-8deg' }] }]}>A</KidText>
-              <KidText style={[styles.iconLetterSmall, { color: '#FF5B57' }]}>B</KidText>
-              <KidText style={[styles.iconLetter, { color: '#B85BFF', right: 4, top: 2, transform: [{ rotate: '8deg' }] }]}>C</KidText>
-            </View>
-          ) : item.key === 'numbers' ? (
-            <Image source={require('../../assets/home-number-123.png')} resizeMode="contain" style={styles.homeNumberAsset} />
-          ) : item.key === 'words' ? (
-            <Image source={require('../../assets/home-word-cat.png')} resizeMode="contain" style={styles.homeWordAsset} />
-          ) : item.key === 'games' ? (
-            <Image source={require('../../assets/home-game-controller.png')} resizeMode="contain" style={styles.homeGameAsset} />
-          ) : item.key === 'practice' ? (
-            <Image source={require('../../assets/home-practice-pencil.png')} resizeMode="contain" style={styles.homePracticeAsset} />
-          ) : (
-            <Image source={require('../../assets/home-reward-trophy.png')} resizeMode="contain" style={styles.homeRewardAsset} />
-          )}
-        </View>
-        <KidText style={[styles.homeTileLabel, { fontSize: 14 * scale, lineHeight: 18 * scale }]}>{item.label === 'Rewards' ? 'My Rewards' : item.label}</KidText>
-      </LinearGradient>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={item.label}
+      onPress={onPress}
+      onHoverIn={() => {
+        hovered.current = true;
+        animateTile(1);
+      }}
+      onHoverOut={() => {
+        hovered.current = false;
+        animateTile(0);
+      }}
+      onPressIn={() => animateTile(-0.45)}
+      onPressOut={() => animateTile(hovered.current ? 1 : 0)}
+      style={styles.homeTilePress}
+    >
+      <Animated.View style={[styles.homeTileAnimated, tileAnimatedStyle]}>
+        <LinearGradient colors={['#FFFFFF', '#F9FBFF']} style={[styles.homeTile, { minHeight: 124 * scale, borderRadius: 18 * scale, gap: 8 * scale }]}>
+          <Animated.View pointerEvents="none" style={[styles.homeTileGlow, { borderRadius: 18 * scale }, glowStyle]} />
+          <View style={[styles.homeTileIconWrap, { minHeight: 52 * scale, transform: [{ scale }] }]}>
+            {item.key === 'letters' ? (
+              <View style={styles.abcIcon}>
+                <KidText style={[styles.iconLetter, { color: '#16C4C8', left: 5, top: 6, transform: [{ rotate: '-8deg' }] }]}>A</KidText>
+                <KidText style={[styles.iconLetterSmall, { color: '#FF5B57' }]}>B</KidText>
+                <KidText style={[styles.iconLetter, { color: '#B85BFF', right: 4, top: 2, transform: [{ rotate: '8deg' }] }]}>C</KidText>
+              </View>
+            ) : item.key === 'numbers' ? (
+              <Image source={require('../../assets/home-number-123.png')} resizeMode="contain" style={styles.homeNumberAsset} />
+            ) : item.key === 'words' ? (
+              <Image source={require('../../assets/home-word-cat.png')} resizeMode="contain" style={styles.homeWordAsset} />
+            ) : item.key === 'games' ? (
+              <Image source={require('../../assets/home-game-controller.png')} resizeMode="contain" style={styles.homeGameAsset} />
+            ) : item.key === 'practice' ? (
+              <Image source={require('../../assets/home-practice-pencil.png')} resizeMode="contain" style={styles.homePracticeAsset} />
+            ) : (
+              <Image source={require('../../assets/home-reward-trophy.png')} resizeMode="contain" style={styles.homeRewardAsset} />
+            )}
+          </View>
+          <KidText style={[styles.homeTileLabel, { fontSize: 14 * scale, lineHeight: 18 * scale }]}>{item.label === 'Rewards' ? 'My Rewards' : item.label}</KidText>
+        </LinearGradient>
+      </Animated.View>
     </Pressable>
   );
 }
@@ -962,6 +1028,15 @@ const styles = StyleSheet.create({
   homeTilePress: {
     flex: 1
   },
+  homeTileAnimated: {
+    flex: 1,
+    borderRadius: 18,
+    shadowColor: '#6A5EE8',
+    shadowOpacity: 0.12,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 5
+  },
   homeTile: {
     minHeight: 124,
     borderRadius: 18,
@@ -970,11 +1045,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    shadowColor: '#6A5EE8',
-    shadowOpacity: 0.12,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 5
+    overflow: 'hidden'
+  },
+  homeTileGlow: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255,255,255,0.42)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,218,86,0.45)'
   },
   homeTileIconWrap: {
     minHeight: 52,
