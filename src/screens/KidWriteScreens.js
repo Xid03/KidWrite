@@ -262,7 +262,8 @@ export function OnboardingScreen({ go }) {
 export function HomeScreen({ go }) {
   const { coins } = useKidWrite();
   const { width } = useWindowDimensions();
-  const cols = width < 720 ? 2 : width < 1040 ? 3 : 6;
+  const isWide = width >= 640;
+  const cols = isWide ? 3 : 2;
   return (
     <ScreenScaffold style={styles.homeScreenInner}>
       <View style={styles.homeTopRow}>
@@ -276,12 +277,12 @@ export function HomeScreen({ go }) {
         </View>
       </View>
 
-      <LinearGradient colors={['#5FA9FF', '#6DD7FF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.homeContinueCard}>
+      <LinearGradient colors={['#5FA9FF', '#6DD7FF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.homeContinueCard, isWide && styles.homeContinueCardWide]}>
         <View style={styles.homeContinueTextBlock}>
           <KidText style={styles.homeContinueTitle}>Let’s continue</KidText>
           <KidText style={styles.homeContinueSubtitle}>your learning journey!</KidText>
         </View>
-        <Image source={require('../../assets/mascot-pencil.png')} resizeMode="contain" style={styles.homeContinueMascot} />
+        <Image source={require('../../assets/mascot-pencil.png')} resizeMode="contain" style={[styles.homeContinueMascot, isWide && styles.homeContinueMascotWide]} />
       </LinearGradient>
 
       <View style={styles.homeGrid}>
@@ -860,8 +861,10 @@ const styles = StyleSheet.create({
     elevation: 9
   },
   homeScreenInner: {
-    gap: 12,
-    paddingTop: 36
+    gap: 14,
+    paddingTop: 36,
+    width: '100%',
+    maxWidth: 620
   },
   homeTopRow: {
     flexDirection: 'row',
@@ -908,7 +911,7 @@ const styles = StyleSheet.create({
     fontWeight: '900'
   },
   homeContinueCard: {
-    minHeight: 118,
+    minHeight: 124,
     borderRadius: 22,
     paddingLeft: 18,
     paddingVertical: 16,
@@ -920,26 +923,36 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.55)',
     ...shadow
   },
+  homeContinueCardWide: {
+    minHeight: 168,
+    paddingLeft: 24,
+    paddingRight: 12
+  },
   homeContinueTextBlock: {
     flex: 1,
     zIndex: 2
   },
   homeContinueTitle: {
     color: colors.white,
-    fontSize: 18,
-    lineHeight: 23,
+    fontSize: 20,
+    lineHeight: 25,
     fontWeight: '900'
   },
   homeContinueSubtitle: {
     color: colors.white,
-    fontSize: 14,
-    lineHeight: 19,
+    fontSize: 15,
+    lineHeight: 20,
     fontWeight: '800'
   },
   homeContinueMascot: {
-    width: 150,
-    height: 112,
+    width: 156,
+    height: 116,
     marginRight: -8
+  },
+  homeContinueMascotWide: {
+    width: 210,
+    height: 156,
+    marginRight: -12
   },
   homeGrid: {
     flexDirection: 'row',
@@ -950,7 +963,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   homeTile: {
-    minHeight: 118,
+    minHeight: 124,
     borderRadius: 18,
     borderWidth: 1,
     borderColor: 'rgba(114,87,255,0.12)',

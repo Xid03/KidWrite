@@ -59,16 +59,18 @@ export function AppNavigator() {
 
 function BottomTabs({ active, setScreen }) {
   return (
-    <View style={styles.tabWrap} accessibilityRole="tablist">
-      {bottomTabs.map((tab) => {
-        const selected = active === tab.key;
-        return (
-          <Pressable key={tab.key} accessibilityRole="tab" accessibilityState={{ selected }} onPress={() => setScreen(tab.key)} style={styles.tabButton}>
-            <Feather name={tab.icon} size={23} color={selected ? colors.purple : '#A7ADC1'} />
-            <KidText variant="caption" style={[styles.tabLabel, selected && styles.tabLabelActive]}>{tab.label}</KidText>
-          </Pressable>
-        );
-      })}
+    <View style={styles.tabShell} pointerEvents="box-none">
+      <View style={styles.tabWrap} accessibilityRole="tablist">
+        {bottomTabs.map((tab) => {
+          const selected = active === tab.key;
+          return (
+            <Pressable key={tab.key} accessibilityRole="tab" accessibilityState={{ selected }} onPress={() => setScreen(tab.key)} style={styles.tabButton}>
+              <Feather name={tab.icon} size={23} color={selected ? colors.purple : '#A7ADC1'} />
+              <KidText variant="caption" style={[styles.tabLabel, selected && styles.tabLabelActive]}>{tab.label}</KidText>
+            </Pressable>
+          );
+        })}
+      </View>
     </View>
   );
 }
@@ -81,13 +83,16 @@ const styles = StyleSheet.create({
   content: {
     flex: 1
   },
-  tabWrap: {
+  tabShell: {
     position: 'absolute',
-    left: 18,
-    right: 18,
+    left: 0,
+    right: 0,
     bottom: 18,
-    alignSelf: 'center',
-    maxWidth: 560,
+    alignItems: 'center'
+  },
+  tabWrap: {
+    width: '92%',
+    maxWidth: 620,
     minHeight: 72,
     borderRadius: radius.xl,
     backgroundColor: 'rgba(255,255,255,0.93)',
