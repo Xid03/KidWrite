@@ -58,5 +58,6 @@ The mascot and the reference-style splash scene were generated with the local `i
 - `assets/mascot-pencil.png`
 - `assets/splash-fantasy.png`
 - `assets/onboarding-fantasy.png`
+- `assets/onboarding-letter-apple.png`
 
 Additional bitmap-only assets should be generated the same way, then committed under `assets/` before use in code.

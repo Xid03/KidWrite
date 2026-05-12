@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { Animated, Easing, ImageBackground, Pressable, StyleSheet, Switch, View, useWindowDimensions } from 'react-native';
+import { Animated, Easing, Image, ImageBackground, Pressable, StyleSheet, Switch, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Feather from '@expo/vector-icons/Feather';
 import * as Speech from 'expo-speech';
@@ -188,10 +188,12 @@ export function OnboardingScreen({ go }) {
         <KidText variant="title" style={[styles.onboardingSingleTitle, { fontSize: 27 * cardScale, lineHeight: 34 * cardScale }]}>{title}</KidText>
         <View style={[styles.onboardingSingleArt, { minHeight: Math.max(300, cardHeight * 0.48) }]}>
           {index === 0 ? (
-            <>
-              <LetterTraceArt text="A" accent="#FF5B57" size={artSize} />
-              <View style={styles.onboardingSingleCharacter}><AppleArt size={artSize * 0.34} /></View>
-            </>
+            <Image
+              source={require('../../assets/onboarding-letter-apple.png')}
+              resizeMode="contain"
+              style={[styles.onboardingGeneratedArt, { width: artSize * 1.08, height: artSize * 1.08 }]}
+              accessibilityLabel="Traceable letter A with a smiling apple"
+            />
           ) : index === 1 ? (
             <>
               <NumberTraceArt number="3" size={artSize} />
@@ -750,6 +752,10 @@ const styles = StyleSheet.create({
     minHeight: 300,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  onboardingGeneratedArt: {
+    maxWidth: '100%',
+    maxHeight: '100%'
   },
   onboardingSingleCharacter: {
     position: 'absolute',
