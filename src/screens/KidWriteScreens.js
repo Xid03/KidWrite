@@ -87,15 +87,15 @@ const letterExamples = {
   Z: 'Zebra'
 };
 
-function LetterExampleVisual({ letter, word }) {
+function LetterExampleVisual({ letter, word, compact = false }) {
   if (letter.toUpperCase() === 'A') {
-    return <Image source={require('../../assets/letter-lesson-apple.png')} resizeMode="contain" style={styles.letterAppleImage} />;
+    return <Image source={require('../../assets/letter-lesson-apple.png')} resizeMode="contain" style={[styles.letterAppleImage, compact && styles.letterAppleImageCompact]} />;
   }
 
   return (
-    <LinearGradient colors={['#FFFFFF', '#F3EEFF']} style={styles.letterExampleFallback}>
-      <KidText style={styles.letterExampleFallbackLetter}>{letter}</KidText>
-      <KidText style={styles.letterExampleFallbackWord}>{word}</KidText>
+    <LinearGradient colors={['#FFFFFF', '#F3EEFF']} style={[styles.letterExampleFallback, compact && styles.letterExampleFallbackCompact]}>
+      <KidText style={[styles.letterExampleFallbackLetter, compact && styles.letterExampleFallbackLetterCompact]}>{letter}</KidText>
+      <KidText style={[styles.letterExampleFallbackWord, compact && styles.letterExampleFallbackWordCompact]}>{word}</KidText>
     </LinearGradient>
   );
 }
@@ -566,16 +566,23 @@ export function LetterTracingScreen({ go }) {
   const { soundEnabled, setCoins, selectedLetter, letterCase, letterProgress, completeLetter } = useKidWrite();
   const { width } = useWindowDimensions();
   const [completed, setCompleted] = useState(false);
+  const [traceResetKey, setTraceResetKey] = useState(0);
   const isTablet = width >= 700;
+  const isLessonWide = width >= 760;
   const traceLetter = letterCase === 'lower' ? selectedLetter.toLowerCase() : selectedLetter.toUpperCase();
   const exampleWord = letterExamples[selectedLetter.toUpperCase()] || 'Apple';
   const currentStars = letterProgress[`${letterCase}:${traceLetter}`] || 0;
   const exampleText = `${traceLetter} is for ${exampleWord}`;
   const earnedStars = completed ? 3 : currentStars;
+  const traceArtSize = isLessonWide ? 380 : Math.min(270, Math.max(210, width * 0.48));
   const completeTrace = () => {
     setCompleted(true);
     completeLetter(traceLetter, letterCase, 3);
     setCoins((value) => value + 5);
+  };
+  const replayTrace = () => {
+    setCompleted(false);
+    setTraceResetKey((value) => value + 1);
   };
   return (
     <ScreenScaffold
@@ -586,7 +593,10 @@ export function LetterTracingScreen({ go }) {
       <View style={styles.letterLessonHeader}>
         <IconCircle icon="arrow-left" onPress={() => go('letters')} label="Back to letters" color={colors.purple} />
         <View style={styles.letterLessonTitleWrap}>
-          <KidText style={[styles.letterLessonTitle, !isTablet && styles.letterLessonTitleCompact]}>Letter <KidText style={[styles.letterLessonTitleAccent, !isTablet && styles.letterLessonTitleCompact]}>{traceLetter}</KidText></KidText>
+          <View style={styles.letterLessonTitleRow}>
+            <KidText style={[styles.letterLessonTitle, !isTablet && styles.letterLessonTitleCompact]}>Letter</KidText>
+            <KidText style={[styles.letterLessonTitleAccent, !isTablet && styles.letterLessonTitleAccentCompact]}>{traceLetter}</KidText>
+          </View>
           <View style={styles.letterLessonUnderline} />
         </View>
         <IconCircle icon="volume-2" onPress={() => speak(traceLetter, soundEnabled)} label="Hear letter" color={colors.purple} />
@@ -594,53 +604,53 @@ export function LetterTracingScreen({ go }) {
 
       <StarRow earned={earnedStars} size={isTablet ? 46 : 36} />
 
-      <GlassCard style={styles.letterLessonCard}>
-        <View style={styles.letterLessonMainRow}>
-          <View style={styles.letterTraceBox}>
-            <TracePad strokeColor="#8E62FF" onComplete={completeTrace}>
-              <View style={styles.letterTraceStage}>
+      <GlassCard style={[styles.letterLessonCard, !isLessonWide && styles.letterLessonCardCompact]}>
+        <View style={[styles.letterLessonMainRow, !isLessonWide && styles.letterLessonMainRowCompact]}>
+          <View style={[styles.letterTraceBox, !isLessonWide && styles.letterTraceBoxCompact]}>
+            <TracePad strokeColor="#8E62FF" onComplete={completeTrace} resetKey={traceResetKey}>
+              <View style={[styles.letterTraceStage, !isLessonWide && styles.letterTraceStageCompact]}>
                 <View style={styles.letterTraceHalo} />
-                <LetterTraceArt text={traceLetter} size={isTablet ? 380 : 300} accent="#A45BFF" />
+                <LetterTraceArt text={traceLetter} size={traceArtSize} accent="#A45BFF" />
               </View>
             </TracePad>
           </View>
 
-          <View style={styles.letterExampleColumn}>
-            <View style={styles.letterAppleCircle}>
-              <LetterExampleVisual letter={traceLetter} word={exampleWord} />
+          <View style={[styles.letterExampleColumn, !isLessonWide && styles.letterExampleColumnCompact]}>
+            <View style={[styles.letterAppleCircle, !isLessonWide && styles.letterAppleCircleCompact]}>
+              <LetterExampleVisual letter={traceLetter} word={exampleWord} compact={!isLessonWide} />
             </View>
-            <View style={styles.letterWordPill}>
-              <KidText style={styles.letterWordText}><KidText style={styles.letterWordAccent}>{traceLetter}</KidText> is for <KidText style={styles.letterWordAccent}>{exampleWord}</KidText></KidText>
+            <View style={[styles.letterWordPill, !isLessonWide && styles.letterWordPillCompact]}>
+              <KidText style={[styles.letterWordText, !isLessonWide && styles.letterWordTextCompact]}><KidText style={styles.letterWordAccent}>{traceLetter}</KidText> is for <KidText style={styles.letterWordAccent}>{exampleWord}</KidText></KidText>
             </View>
-            <Pressable accessibilityRole="button" accessibilityLabel="Hear example word" onPress={() => speak(exampleText, soundEnabled)} style={styles.letterSoundButton}>
-              <Feather name="volume-2" size={28} color={colors.white} />
+            <Pressable accessibilityRole="button" accessibilityLabel="Hear example word" onPress={() => speak(exampleText, soundEnabled)} style={[styles.letterSoundButton, !isLessonWide && styles.letterSoundButtonCompact]}>
+              <Feather name="volume-2" size={isLessonWide ? 28 : 22} color={colors.white} />
             </Pressable>
           </View>
         </View>
 
-        <LinearGradient colors={['rgba(255,232,252,0.84)', 'rgba(255,255,255,0.72)']} style={styles.letterLearnPanel}>
-          <View style={styles.letterLearnStar}>
-            <Feather name="star" size={46} color={colors.yellow} fill={colors.yellow} />
+        <LinearGradient colors={['rgba(255,232,252,0.84)', 'rgba(255,255,255,0.72)']} style={[styles.letterLearnPanel, !isLessonWide && styles.letterLearnPanelCompact]}>
+          <View style={[styles.letterLearnStar, !isLessonWide && styles.letterLearnStarCompact]}>
+            <Feather name="star" size={isLessonWide ? 46 : 34} color={colors.yellow} fill={colors.yellow} />
           </View>
           <View style={styles.letterLearnCopy}>
-            <KidText style={styles.letterLearnTitle}>Let’s learn!</KidText>
-            <KidText style={styles.letterLearnText}>Trace the letter, listen to the sound, and earn stars!</KidText>
+            <KidText style={[styles.letterLearnTitle, !isLessonWide && styles.letterLearnTitleCompact]}>Let’s learn!</KidText>
+            <KidText style={[styles.letterLearnText, !isLessonWide && styles.letterLearnTextCompact]}>Trace the letter, listen to the sound, and earn stars!</KidText>
           </View>
-          <Image source={require('../../assets/letter-lesson-bear.png')} resizeMode="contain" style={styles.letterBearImage} />
+          <Image source={require('../../assets/letter-lesson-bear.png')} resizeMode="contain" style={[styles.letterBearImage, !isLessonWide && styles.letterBearImageCompact]} />
         </LinearGradient>
       </GlassCard>
 
-      <View style={styles.letterLessonActions}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Replay tracing" onPress={() => setCompleted(false)} style={styles.letterReplayButton}>
-          <Feather name="rotate-ccw" size={30} color={colors.white} />
-          <KidText style={styles.letterActionText}>Replay</KidText>
+      <View style={[styles.letterLessonActions, !isLessonWide && styles.letterLessonActionsCompact]}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Replay tracing" onPress={replayTrace} style={[styles.letterReplayButton, !isLessonWide && styles.letterActionButtonCompact]}>
+          <Feather name="rotate-ccw" size={isLessonWide ? 30 : 22} color={colors.white} />
+          <KidText style={[styles.letterActionText, !isLessonWide && styles.letterActionTextCompact]}>Replay</KidText>
         </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel="Speak letter" onPress={() => speak(traceLetter, soundEnabled)} style={styles.letterMicButton}>
-          <Feather name="mic" size={38} color={colors.white} />
+        <Pressable accessibilityRole="button" accessibilityLabel="Speak letter" onPress={() => speak(traceLetter, soundEnabled)} style={[styles.letterMicButton, !isLessonWide && styles.letterMicButtonCompact]}>
+          <Feather name="mic" size={isLessonWide ? 38 : 28} color={colors.white} />
         </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel="Next letter" onPress={() => go('letters')} style={styles.letterNextButton}>
-          <Feather name="arrow-right" size={30} color={colors.white} />
-          <KidText style={styles.letterActionText}>Next</KidText>
+        <Pressable accessibilityRole="button" accessibilityLabel="Next letter" onPress={() => go('letters')} style={[styles.letterNextButton, !isLessonWide && styles.letterActionButtonCompact]}>
+          <Feather name="arrow-right" size={isLessonWide ? 30 : 22} color={colors.white} />
+          <KidText style={[styles.letterActionText, !isLessonWide && styles.letterActionTextCompact]}>Next</KidText>
         </Pressable>
       </View>
     </ScreenScaffold>
@@ -1722,11 +1732,11 @@ const styles = StyleSheet.create({
     textShadowRadius: 6
   },
   letterLessonScreenInner: {
-    gap: 18,
-    paddingTop: 28
+    gap: 14,
+    paddingTop: 18
   },
   letterLessonHeader: {
-    minHeight: 76,
+    minHeight: 64,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -1737,6 +1747,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8
+  },
+  letterLessonTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    gap: 10
   },
   letterLessonTitle: {
     color: colors.ink,
@@ -1749,16 +1765,25 @@ const styles = StyleSheet.create({
     textShadowRadius: 4
   },
   letterLessonTitleCompact: {
-    fontSize: 34,
-    lineHeight: 40
+    fontSize: 32,
+    lineHeight: 38
   },
   letterLessonTitleAccent: {
     color: colors.purple,
-    fontWeight: '900'
+    fontSize: 58,
+    lineHeight: 62,
+    fontWeight: '900',
+    textShadowColor: 'rgba(255,255,255,0.9)',
+    textShadowOffset: { width: 0, height: 4 },
+    textShadowRadius: 4
+  },
+  letterLessonTitleAccentCompact: {
+    fontSize: 40,
+    lineHeight: 44
   },
   letterLessonUnderline: {
-    width: 86,
-    height: 7,
+    width: 78,
+    height: 6,
     borderRadius: 4,
     backgroundColor: colors.orange
   },
@@ -1769,6 +1794,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'rgba(255,255,255,0.9)'
   },
+  letterLessonCardCompact: {
+    borderRadius: 24,
+    padding: 12,
+    gap: 14
+  },
   letterLessonMainRow: {
     minHeight: 380,
     flexDirection: 'row',
@@ -1777,6 +1807,13 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 18
   },
+  letterLessonMainRowCompact: {
+    minHeight: 260,
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    alignItems: 'center',
+    gap: 10
+  },
   letterTraceBox: {
     flex: 1.25,
     minWidth: 280,
@@ -1784,10 +1821,19 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     overflow: 'hidden'
   },
+  letterTraceBoxCompact: {
+    flex: 1.05,
+    minWidth: 0,
+    minHeight: 260,
+    borderRadius: 22
+  },
   letterTraceStage: {
     minHeight: 350,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  letterTraceStageCompact: {
+    minHeight: 260
   },
   letterTraceHalo: {
     position: 'absolute',
@@ -1803,6 +1849,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 14
   },
+  letterExampleColumnCompact: {
+    flex: 0.78,
+    minWidth: 0,
+    gap: 8
+  },
   letterAppleCircle: {
     width: 228,
     height: 204,
@@ -1811,9 +1862,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
+  letterAppleCircleCompact: {
+    width: 148,
+    height: 126,
+    borderRadius: 64
+  },
   letterAppleImage: {
     width: 214,
     height: 190
+  },
+  letterAppleImageCompact: {
+    width: 142,
+    height: 118
   },
   letterExampleFallback: {
     width: 196,
@@ -1825,6 +1885,11 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.92)',
     ...shadow
   },
+  letterExampleFallbackCompact: {
+    width: 132,
+    height: 112,
+    borderRadius: 34
+  },
   letterExampleFallbackLetter: {
     color: colors.purple,
     fontSize: 96,
@@ -1834,12 +1899,20 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 4 },
     textShadowRadius: 4
   },
+  letterExampleFallbackLetterCompact: {
+    fontSize: 60,
+    lineHeight: 66
+  },
   letterExampleFallbackWord: {
     color: colors.ink,
     fontSize: 21,
     lineHeight: 26,
     fontWeight: '900',
     textAlign: 'center'
+  },
+  letterExampleFallbackWordCompact: {
+    fontSize: 14,
+    lineHeight: 18
   },
   letterWordPill: {
     minHeight: 78,
@@ -1853,12 +1926,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     ...shadow
   },
+  letterWordPillCompact: {
+    minHeight: 50,
+    minWidth: 0,
+    width: '100%',
+    borderRadius: 17,
+    paddingHorizontal: 8
+  },
   letterWordText: {
     color: colors.ink,
     fontSize: 29,
     lineHeight: 36,
     fontWeight: '900',
     textAlign: 'center'
+  },
+  letterWordTextCompact: {
+    fontSize: 15,
+    lineHeight: 20
   },
   letterWordAccent: {
     color: colors.purple,
@@ -1876,6 +1960,13 @@ const styles = StyleSheet.create({
     marginTop: -6,
     ...shadow
   },
+  letterSoundButtonCompact: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 3,
+    marginTop: -4
+  },
   letterLearnPanel: {
     minHeight: 132,
     borderRadius: 28,
@@ -1886,6 +1977,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     gap: 18
   },
+  letterLearnPanelCompact: {
+    minHeight: 98,
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    gap: 10
+  },
   letterLearnStar: {
     width: 82,
     height: 82,
@@ -1893,6 +1991,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.78)',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  letterLearnStarCompact: {
+    width: 58,
+    height: 58,
+    borderRadius: 18
   },
   letterLearnCopy: {
     flex: 1,
@@ -1905,11 +2008,19 @@ const styles = StyleSheet.create({
     lineHeight: 36,
     fontWeight: '900'
   },
+  letterLearnTitleCompact: {
+    fontSize: 21,
+    lineHeight: 26
+  },
   letterLearnText: {
     color: colors.ink,
     fontSize: 18,
     lineHeight: 26,
     fontWeight: '700'
+  },
+  letterLearnTextCompact: {
+    fontSize: 12,
+    lineHeight: 17
   },
   letterBearImage: {
     width: 210,
@@ -1917,12 +2028,22 @@ const styles = StyleSheet.create({
     marginRight: -18,
     marginBottom: -18
   },
+  letterBearImageCompact: {
+    width: 108,
+    height: 76,
+    marginRight: -10,
+    marginBottom: -12
+  },
   letterLessonActions: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 18,
     flexWrap: 'wrap'
+  },
+  letterLessonActionsCompact: {
+    gap: 10,
+    flexWrap: 'nowrap'
   },
   letterReplayButton: {
     flex: 1,
@@ -1936,6 +2057,12 @@ const styles = StyleSheet.create({
     gap: 12,
     ...shadow
   },
+  letterActionButtonCompact: {
+    minWidth: 0,
+    minHeight: 54,
+    borderRadius: 27,
+    gap: 7
+  },
   letterMicButton: {
     width: 94,
     height: 94,
@@ -1946,6 +2073,12 @@ const styles = StyleSheet.create({
     borderWidth: 6,
     borderColor: 'rgba(255,255,255,0.72)',
     ...shadow
+  },
+  letterMicButtonCompact: {
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    borderWidth: 4
   },
   letterNextButton: {
     flex: 1,
@@ -1964,6 +2097,10 @@ const styles = StyleSheet.create({
     fontSize: 25,
     lineHeight: 31,
     fontWeight: '900'
+  },
+  letterActionTextCompact: {
+    fontSize: 16,
+    lineHeight: 20
   },
   traceCard: {
     minHeight: 330,

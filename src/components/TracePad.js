@@ -1,10 +1,15 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PanResponder, StyleSheet, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-export function TracePad({ children, strokeColor = '#FF5B57', onComplete }) {
+export function TracePad({ children, strokeColor = '#FF5B57', onComplete, resetKey }) {
   const [paths, setPaths] = useState([]);
   const current = useRef([]);
+
+  useEffect(() => {
+    current.current = [];
+    setPaths([]);
+  }, [resetKey]);
 
   const responder = useMemo(
     () =>
