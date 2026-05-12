@@ -195,10 +195,12 @@ export function OnboardingScreen({ go }) {
               accessibilityLabel="Traceable letter A with a smiling apple"
             />
           ) : index === 1 ? (
-            <>
-              <NumberTraceArt number="3" size={artSize} />
-              <View style={styles.onboardingSingleDucks}><DucksArt size={artSize * 0.7} /></View>
-            </>
+            <Image
+              source={require('../../assets/onboarding-number-ducks.png')}
+              resizeMode="contain"
+              style={[styles.onboardingGeneratedArt, { width: artSize * 1.08, height: artSize * 1.08 }]}
+              accessibilityLabel="Traceable number 3 with three ducklings"
+            />
           ) : (
             <>
               <LetterTraceArt text="CAT" accent="#FF79C8" size={artSize * 1.02} />
