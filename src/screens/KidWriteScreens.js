@@ -56,6 +56,41 @@ function ObjectGroup({ count = 5 }) {
   );
 }
 
+function HomeMenuTile({ item, onPress }) {
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={item.label} onPress={onPress} style={styles.homeTilePress}>
+      <LinearGradient colors={['#FFFFFF', '#F9FBFF']} style={styles.homeTile}>
+        <View style={styles.homeTileIconWrap}>
+          {item.key === 'letters' ? (
+            <View style={styles.abcIcon}>
+              <KidText style={[styles.iconLetter, { color: '#16C4C8', left: 5, top: 6, transform: [{ rotate: '-8deg' }] }]}>A</KidText>
+              <KidText style={[styles.iconLetterSmall, { color: '#FF5B57' }]}>B</KidText>
+              <KidText style={[styles.iconLetter, { color: '#B85BFF', right: 4, top: 2, transform: [{ rotate: '8deg' }] }]}>C</KidText>
+            </View>
+          ) : item.key === 'numbers' ? (
+            <View style={styles.numberIcon}>
+              <KidText style={[styles.numberGlyph, { color: '#28A7FF' }]}>1</KidText>
+              <KidText style={[styles.numberGlyph, { color: '#FFD33D' }]}>2</KidText>
+              <KidText style={[styles.numberGlyph, { color: '#4DD45F' }]}>3</KidText>
+            </View>
+          ) : item.key === 'words' ? (
+            <View style={styles.wordIcon}>
+              <KidText style={styles.wordCatIcon}>CAT</KidText>
+            </View>
+          ) : item.key === 'games' ? (
+            <Feather name="zap" size={40} color="#5B4BEE" />
+          ) : item.key === 'practice' ? (
+            <Feather name="edit-3" size={40} color="#FF9B33" />
+          ) : (
+            <Feather name="award" size={42} color="#FFB833" />
+          )}
+        </View>
+        <KidText style={styles.homeTileLabel}>{item.label === 'Rewards' ? 'My Rewards' : item.label}</KidText>
+      </LinearGradient>
+    </Pressable>
+  );
+}
+
 export function SplashScreen({ go }) {
   const { width, height } = useWindowDimensions();
   const isTablet = width >= 700 || height >= 1000;
@@ -226,28 +261,33 @@ export function OnboardingScreen({ go }) {
 
 export function HomeScreen({ go }) {
   const { coins } = useKidWrite();
-  const cols = useColumns(280);
+  const { width } = useWindowDimensions();
+  const cols = width < 720 ? 2 : width < 1040 ? 3 : 6;
   return (
-    <ScreenScaffold>
-      <View style={styles.topRow}>
-        <View style={styles.avatarMini}><CatArt size={52} /></View>
-        <KidText variant="section" style={{ flex: 1 }}>Hi, Emma! 👋</KidText>
-        <GlassCard style={styles.coinPill} colors={['#FFFFFF', '#FFF5CE']}>
-          <Feather name="star" size={22} color={colors.yellow} fill={colors.yellow} />
-          <KidText variant="body">{coins}</KidText>
-        </GlassCard>
-      </View>
-      <LinearGradient colors={['#58B8FF', '#8AD4FF']} style={styles.continueCard}>
-        <View style={{ flex: 1 }}>
-          <KidText variant="section" style={styles.whiteText}>Let’s continue</KidText>
-          <KidText style={styles.whiteText}>your learning journey!</KidText>
+    <ScreenScaffold style={styles.homeScreenInner}>
+      <View style={styles.homeTopRow}>
+        <View style={styles.homeAvatar}>
+          <Image source={require('../../assets/app-icon.png')} resizeMode="cover" style={styles.homeAvatarImage} />
         </View>
-        <MascotImage style={styles.continueMascot} />
+        <KidText style={styles.homeGreeting}>Hi, Emma! 👋</KidText>
+        <View style={styles.homeCoinPill}>
+          <Feather name="star" size={22} color={colors.yellow} fill={colors.yellow} />
+          <KidText style={styles.homeCoinText}>{coins}</KidText>
+        </View>
+      </View>
+
+      <LinearGradient colors={['#5FA9FF', '#6DD7FF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.homeContinueCard}>
+        <View style={styles.homeContinueTextBlock}>
+          <KidText style={styles.homeContinueTitle}>Let’s continue</KidText>
+          <KidText style={styles.homeContinueSubtitle}>your learning journey!</KidText>
+        </View>
+        <Image source={require('../../assets/mascot-pencil.png')} resizeMode="contain" style={styles.homeContinueMascot} />
       </LinearGradient>
-      <View style={[styles.grid, { gridTemplateColumns: undefined }]}>
+
+      <View style={styles.homeGrid}>
         {menuItems.map((item) => (
           <View key={item.key} style={{ width: `${100 / cols}%`, padding: 6 }}>
-            <CardButton item={item} onPress={() => go(item.key === 'letters' ? 'letterTrace' : item.key === 'numbers' ? 'numberTrace' : item.key === 'words' ? 'wordTrace' : item.key === 'games' ? 'game' : item.key === 'rewards' ? 'rewards' : 'category')} />
+            <HomeMenuTile item={item} onPress={() => go(item.key === 'letters' ? 'letterTrace' : item.key === 'numbers' ? 'numberTrace' : item.key === 'words' ? 'wordTrace' : item.key === 'games' ? 'game' : item.key === 'rewards' ? 'rewards' : 'category')} />
           </View>
         ))}
       </View>
@@ -818,6 +858,175 @@ const styles = StyleSheet.create({
     shadowRadius: 14,
     shadowOffset: { width: 0, height: 8 },
     elevation: 9
+  },
+  homeScreenInner: {
+    gap: 12,
+    paddingTop: 36
+  },
+  homeTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    minHeight: 54
+  },
+  homeAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FFE4F2',
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: colors.white,
+    ...shadow
+  },
+  homeAvatarImage: {
+    width: '100%',
+    height: '100%'
+  },
+  homeGreeting: {
+    flex: 1,
+    color: colors.ink,
+    fontSize: 18,
+    lineHeight: 24,
+    fontWeight: '900'
+  },
+  homeCoinPill: {
+    minHeight: 42,
+    borderRadius: 21,
+    paddingHorizontal: 14,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: 'rgba(114,87,255,0.12)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    ...shadow
+  },
+  homeCoinText: {
+    color: colors.ink,
+    fontSize: 15,
+    fontWeight: '900'
+  },
+  homeContinueCard: {
+    minHeight: 118,
+    borderRadius: 22,
+    paddingLeft: 18,
+    paddingVertical: 16,
+    paddingRight: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.55)',
+    ...shadow
+  },
+  homeContinueTextBlock: {
+    flex: 1,
+    zIndex: 2
+  },
+  homeContinueTitle: {
+    color: colors.white,
+    fontSize: 18,
+    lineHeight: 23,
+    fontWeight: '900'
+  },
+  homeContinueSubtitle: {
+    color: colors.white,
+    fontSize: 14,
+    lineHeight: 19,
+    fontWeight: '800'
+  },
+  homeContinueMascot: {
+    width: 150,
+    height: 112,
+    marginRight: -8
+  },
+  homeGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: -6
+  },
+  homeTilePress: {
+    flex: 1
+  },
+  homeTile: {
+    minHeight: 118,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(114,87,255,0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    shadowColor: '#6A5EE8',
+    shadowOpacity: 0.12,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 5
+  },
+  homeTileIconWrap: {
+    minHeight: 52,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  homeTileLabel: {
+    color: colors.ink,
+    fontSize: 14,
+    lineHeight: 18,
+    fontWeight: '900',
+    textAlign: 'center'
+  },
+  abcIcon: {
+    width: 78,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  iconLetter: {
+    position: 'absolute',
+    fontSize: 38,
+    lineHeight: 44,
+    fontWeight: '900',
+    textShadowColor: 'rgba(21,17,87,0.15)',
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 4
+  },
+  iconLetterSmall: {
+    position: 'absolute',
+    left: 32,
+    top: 22,
+    fontSize: 24,
+    lineHeight: 28,
+    fontWeight: '900'
+  },
+  numberIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 7
+  },
+  numberGlyph: {
+    fontSize: 38,
+    lineHeight: 44,
+    fontWeight: '900',
+    textShadowColor: 'rgba(21,17,87,0.14)',
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 4
+  },
+  wordIcon: {
+    minWidth: 62,
+    minHeight: 38,
+    borderRadius: 10,
+    backgroundColor: '#FFF7EC',
+    borderWidth: 2,
+    borderColor: '#F5D8C5',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  wordCatIcon: {
+    color: colors.purple,
+    fontSize: 22,
+    lineHeight: 26,
+    fontWeight: '900'
   },
   topRow: {
     flexDirection: 'row',
