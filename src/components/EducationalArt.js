@@ -11,10 +11,18 @@ export function AppleArt({ size = 96 }) {
           <Stop offset="1" stopColor="#E92B31" />
         </LinearGradient>
       </Defs>
+      <Ellipse cx="50" cy="86" rx="32" ry="7" fill="#D8C4BE" opacity="0.26" />
       <Path d="M48 25C36 12 18 22 15 43C12 66 27 88 44 82C48 80 52 80 56 82C73 88 88 66 85 43C82 22 64 12 52 25Z" fill="url(#appleRed)" />
       <Path d="M51 27C52 16 57 10 68 9" stroke="#5E3A18" strokeWidth="6" strokeLinecap="round" />
       <Path d="M62 16C74 12 82 19 83 29C72 30 64 26 62 16Z" fill="#43D35F" />
       <Circle cx="35" cy="48" r="6" fill="#FFFFFF" opacity="0.85" />
+      <Circle cx="42" cy="53" r="6" fill="#24124D" />
+      <Circle cx="67" cy="53" r="6" fill="#24124D" />
+      <Circle cx="40" cy="50" r="2" fill="#FFFFFF" />
+      <Circle cx="65" cy="50" r="2" fill="#FFFFFF" />
+      <Ellipse cx="32" cy="64" rx="7" ry="5" fill="#FF8A99" opacity="0.64" />
+      <Ellipse cx="76" cy="64" rx="7" ry="5" fill="#FF8A99" opacity="0.64" />
+      <Path d="M47 65C51 72 60 72 64 65" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round" fill="none" />
     </Svg>
   );
 }

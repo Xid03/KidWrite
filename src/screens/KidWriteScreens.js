@@ -190,7 +190,7 @@ export function OnboardingScreen({ go }) {
           {index === 0 ? (
             <>
               <LetterTraceArt text="A" accent="#FF5B57" size={artSize} />
-              <View style={styles.onboardingSingleCharacter}><AppleArt size={artSize * 0.44} /></View>
+              <View style={styles.onboardingSingleCharacter}><AppleArt size={artSize * 0.34} /></View>
             </>
           ) : index === 1 ? (
             <>
@@ -753,8 +753,8 @@ const styles = StyleSheet.create({
   },
   onboardingSingleCharacter: {
     position: 'absolute',
-    left: -12,
-    bottom: 48
+    left: 6,
+    bottom: 72
   },
   onboardingSingleDucks: {
     position: 'absolute',
