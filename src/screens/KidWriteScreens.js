@@ -156,9 +156,6 @@ export function SplashScreen({ go }) {
               <KidText style={[styles.referenceCtaText, { fontSize: 28 * ctaScale, lineHeight: 34 * ctaScale }]}>Start Learning</KidText>
             </Animated.View>
           </Pressable>
-          <View style={styles.splashDots}>
-            {[0, 1, 2, 3].map((dot) => <View key={dot} style={[styles.splashDot, dot === 0 && styles.splashDotActive]} />)}
-          </View>
         </View>
       </View>
     </ImageBackground>
