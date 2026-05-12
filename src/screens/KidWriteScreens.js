@@ -74,9 +74,9 @@ function HomeMenuTile({ item, onPress, scale = 1 }) {
           ) : item.key === 'games' ? (
             <Image source={require('../../assets/home-game-controller.png')} resizeMode="contain" style={styles.homeGameAsset} />
           ) : item.key === 'practice' ? (
-            <Feather name="edit-3" size={40} color="#FF9B33" />
+            <Image source={require('../../assets/home-practice-pencil.png')} resizeMode="contain" style={styles.homePracticeAsset} />
           ) : (
-            <Feather name="award" size={42} color="#FFB833" />
+            <Image source={require('../../assets/home-reward-trophy.png')} resizeMode="contain" style={styles.homeRewardAsset} />
           )}
         </View>
         <KidText style={[styles.homeTileLabel, { fontSize: 14 * scale, lineHeight: 18 * scale }]}>{item.label === 'Rewards' ? 'My Rewards' : item.label}</KidText>
@@ -1019,6 +1019,14 @@ const styles = StyleSheet.create({
   homeGameAsset: {
     width: 104,
     height: 62
+  },
+  homePracticeAsset: {
+    width: 94,
+    height: 66
+  },
+  homeRewardAsset: {
+    width: 94,
+    height: 72
   },
   topRow: {
     flexDirection: 'row',
