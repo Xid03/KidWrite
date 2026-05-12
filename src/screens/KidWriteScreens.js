@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { Animated, Easing, Image, ImageBackground, Pressable, StyleSheet, Switch, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Feather from '@expo/vector-icons/Feather';
+import Svg, { Circle, Line, Path, Polygon, Text as SvgText } from 'react-native-svg';
 import * as Speech from 'expo-speech';
 import { categories, menuItems, onboarding, parentSummary, progressStats, rewards } from '../data/content';
 import { colors, gradients, radius, shadow } from '../theme';
@@ -97,6 +98,85 @@ function LetterExampleVisual({ letter, word, compact = false }) {
       <KidText style={[styles.letterExampleFallbackLetter, compact && styles.letterExampleFallbackLetterCompact]}>{letter}</KidText>
       <KidText style={[styles.letterExampleFallbackWord, compact && styles.letterExampleFallbackWordCompact]}>{word}</KidText>
     </LinearGradient>
+  );
+}
+
+function LessonTraceGuide({ letter = 'A', size = 420 }) {
+  return (
+    <Svg width={size} height={size * 0.86} viewBox="0 0 360 310">
+      <Circle cx="164" cy="154" r="136" fill="#8E62FF" opacity="0.08" />
+      <Path
+        d="M90 276L176 50L270 276"
+        fill="none"
+        stroke="#FFFFFF"
+        strokeWidth="48"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M90 276L176 50L270 276"
+        fill="none"
+        stroke="#D5D6DE"
+        strokeWidth="18"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeDasharray="14 20"
+      />
+      <Line x1="132" y1="196" x2="222" y2="196" stroke="#FFFFFF" strokeWidth="44" strokeLinecap="round" />
+      <Line x1="132" y1="196" x2="222" y2="196" stroke="#D5D6DE" strokeWidth="16" strokeLinecap="round" strokeDasharray="16 18" />
+      <Path d="M90 276L176 50" stroke="#8E55F7" strokeWidth="32" strokeLinecap="round" />
+      <Path d="M102 250L88 276L116 263" fill="#8E55F7" />
+      <Circle cx="90" cy="276" r="18" fill="#7A3EF2" stroke="#FFFFFF" strokeWidth="5" />
+      <Circle cx="176" cy="50" r="22" fill="#7A3EF2" stroke="#FFFFFF" strokeWidth="4" />
+      <SvgText x="169" y="59" fontSize="24" fontWeight="900" fill="#FFFFFF">1</SvgText>
+      <Circle cx="132" cy="196" r="14" fill="#C8C8D4" stroke="#FFFFFF" strokeWidth="4" opacity="0.9" />
+      <SvgText x="127" y="202" fontSize="16" fontWeight="900" fill="#FFFFFF">2</SvgText>
+      <Circle cx="270" cy="276" r="14" fill="#C8C8D4" stroke="#FFFFFF" strokeWidth="4" opacity="0.9" />
+      <SvgText x="265" y="282" fontSize="16" fontWeight="900" fill="#FFFFFF">3</SvgText>
+      <Circle cx="285" cy="276" r="10" fill="#BFC0C8" />
+      <Path d="M108 236L120 243L114 230Z" fill="#5D38D9" opacity="0.55" />
+      <Path d="M116 220L128 226L121 211Z" fill="#5D38D9" opacity="0.36" />
+      <Path d="M126 205L138 211L132 196Z" fill="#5D38D9" opacity="0.24" />
+      <Polygon points="72,96 80,112 98,115 84,127 88,145 72,136 56,145 60,127 46,115 64,112" fill="#B782FF" opacity="0.45" />
+      <Polygon points="48,168 54,180 68,182 58,192 61,206 48,199 35,206 38,192 28,182 42,180" fill="#B782FF" opacity="0.35" />
+    </Svg>
+  );
+}
+
+function PinnedAppleNote({ letter, word, compact = false }) {
+  return (
+    <View style={[styles.pinnedNote, compact && styles.pinnedNoteCompact]}>
+      <View style={styles.pinnedNotePin} />
+      <Image source={require('../../assets/letter-lesson-apple.png')} resizeMode="contain" style={[styles.pinnedNoteApple, compact && styles.pinnedNoteAppleCompact]} />
+      <KidText style={[styles.pinnedNoteText, compact && styles.pinnedNoteTextCompact]}>{letter} is for</KidText>
+      <KidText style={[styles.pinnedNoteWord, compact && styles.pinnedNoteWordCompact]}>{word}</KidText>
+    </View>
+  );
+}
+
+function BoardActionButton({ icon, label, colors: buttonColors, onPress, compact = false }) {
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}>
+      <LinearGradient colors={buttonColors} style={[styles.boardActionButton, compact && styles.boardActionButtonCompact]}>
+        <Feather name={icon} size={compact ? 22 : 32} color={colors.white} />
+        <KidText style={[styles.boardActionLabel, compact && styles.boardActionLabelCompact]}>{label}</KidText>
+      </LinearGradient>
+    </Pressable>
+  );
+}
+
+function MarkerSet({ compact = false }) {
+  const markerColors = ['#7D4EFF', '#FF4D9D', '#FFD84D', '#2CA5FF', '#42C95E', '#31364F'];
+  return (
+    <View style={[styles.markerTray, compact && styles.markerTrayCompact]}>
+      {markerColors.map((markerColor, index) => (
+        <View key={markerColor} style={[styles.markerPen, compact && styles.markerPenCompact, { transform: [{ rotate: `${index % 2 ? 2 : -2}deg` }] }]}>
+          <View style={[styles.markerCap, { backgroundColor: markerColor }]} />
+          <View style={styles.markerBody} />
+          <View style={[styles.markerTip, { backgroundColor: markerColor }]} />
+        </View>
+      ))}
+    </View>
   );
 }
 
@@ -622,41 +702,44 @@ export function LetterTracingScreen({ go }) {
 
       <StarRow earned={earnedStars} size={isTablet ? 52 : 38} />
 
-      <GlassCard style={[styles.letterLessonCard, !isLessonWide && styles.letterLessonCardCompact]}>
-        <View style={[styles.letterLessonMainRow, !isLessonWide && styles.letterLessonMainRowCompact]}>
-          <View style={[styles.letterTraceBox, !isLessonWide && styles.letterTraceBoxCompact]}>
+      <LinearGradient colors={['#F6BA73', '#D88C45']} style={[styles.whiteboardFrame, !isLessonWide && styles.whiteboardFrameCompact]}>
+        <View style={styles.whiteboardScrewTopLeft} />
+        <View style={styles.whiteboardScrewTopRight} />
+        <View style={styles.whiteboardSurface}>
+          <PinnedAppleNote letter={traceLetter} word={exampleWord} compact={!isLessonWide} />
+          <Image source={require('../../assets/letter-lesson-bear.png')} resizeMode="contain" style={[styles.whiteboardBear, !isLessonWide && styles.whiteboardBearCompact]} />
+          <View style={[styles.whiteboardTraceZone, !isLessonWide && styles.whiteboardTraceZoneCompact]}>
             <TracePad strokeColor="#8E62FF" onComplete={completeTrace} resetKey={traceResetKey}>
-              <View style={[styles.letterTraceStage, !isLessonWide && styles.letterTraceStageCompact]}>
-                <View style={styles.letterTraceHalo} />
-                <LetterTraceArt text={traceLetter} size={traceArtSize} accent="#A45BFF" />
+              <View style={styles.whiteboardTraceGuide}>
+                <LessonTraceGuide letter={traceLetter} size={traceArtSize} />
               </View>
             </TracePad>
           </View>
-
-          <View style={[styles.letterExampleColumn, !isLessonWide && styles.letterExampleColumnCompact]}>
-            <View style={[styles.letterAppleCircle, !isLessonWide && styles.letterAppleCircleCompact]}>
-              <LetterExampleVisual letter={traceLetter} word={exampleWord} compact={!isLessonWide} />
-            </View>
-            <View style={[styles.letterWordPill, !isLessonWide && styles.letterWordPillCompact]}>
-              <KidText style={[styles.letterWordText, !isLessonWide && styles.letterWordTextCompact]}><KidText style={styles.letterWordAccent}>{traceLetter}</KidText> is for <KidText style={styles.letterWordAccent}>{exampleWord}</KidText></KidText>
-            </View>
-            <Pressable accessibilityRole="button" accessibilityLabel="Hear example word" onPress={() => speak(exampleText, soundEnabled)} style={[styles.letterSoundButton, !isLessonWide && styles.letterSoundButtonCompact]}>
-              <Feather name="volume-2" size={isLessonWide ? 28 : 22} color={colors.white} />
-            </Pressable>
+          <View style={[styles.boardActionDock, !isLessonWide && styles.boardActionDockCompact]}>
+            <BoardActionButton icon="volume-2" label="Listen" colors={['#A96DFF', '#743AF1']} onPress={() => speak(exampleText, soundEnabled)} compact={!isLessonWide} />
+            <BoardActionButton icon="lightbulb" label="Hint" colors={['#FFD957', '#FFB621']} onPress={() => speak('Start at the top and trace down the purple line.', soundEnabled)} compact={!isLessonWide} />
+            <BoardActionButton icon="rotate-ccw" label="Replay" colors={['#42AEFF', '#2388E9']} onPress={replayTrace} compact={!isLessonWide} />
           </View>
+          <MarkerSet compact={!isLessonWide} />
         </View>
+      </LinearGradient>
 
-        <LinearGradient colors={['rgba(255,232,252,0.92)', 'rgba(255,255,255,0.78)']} style={[styles.letterLearnPanel, !isLessonWide && styles.letterLearnPanelCompact]}>
-          <View style={[styles.letterLearnStar, !isLessonWide && styles.letterLearnStarCompact]}>
-            <Feather name="star" size={isLessonWide ? 46 : 34} color={colors.yellow} fill={colors.yellow} />
+      <LinearGradient colors={['rgba(255,255,255,0.9)', 'rgba(243,235,255,0.92)']} style={[styles.lessonFeedbackCard, !isLessonWide && styles.lessonFeedbackCardCompact]}>
+        <View style={[styles.feedbackStarWrap, !isLessonWide && styles.feedbackStarWrapCompact]}>
+          <Feather name="star" size={isLessonWide ? 58 : 34} color={colors.yellow} fill={colors.yellow} />
+        </View>
+        <View style={styles.feedbackCopy}>
+          <KidText style={[styles.feedbackTitle, !isLessonWide && styles.feedbackTitleCompact]}>{completed ? 'Great job!' : 'Let’s trace!'}</KidText>
+          <KidText style={[styles.feedbackText, !isLessonWide && styles.feedbackTextCompact]}>{completed ? 'Keep tracing to earn more stars!' : 'Follow the purple stroke and earn stars!'}</KidText>
+        </View>
+        <LinearGradient colors={['#B975FF', '#7445EF']} style={[styles.starsEarnedBadge, !isLessonWide && styles.starsEarnedBadgeCompact]}>
+          <Feather name="star" size={isLessonWide ? 42 : 26} color={colors.yellow} fill={colors.yellow} />
+          <View>
+            <KidText style={[styles.starsEarnedLabel, !isLessonWide && styles.starsEarnedLabelCompact]}>Stars Earned</KidText>
+            <KidText style={[styles.starsEarnedValue, !isLessonWide && styles.starsEarnedValueCompact]}>{earnedStars} / 3</KidText>
           </View>
-          <View style={styles.letterLearnCopy}>
-            <KidText style={[styles.letterLearnTitle, !isLessonWide && styles.letterLearnTitleCompact]}>Let’s learn!</KidText>
-            <KidText style={[styles.letterLearnText, !isLessonWide && styles.letterLearnTextCompact]}>Trace the letter, listen to the sound, and earn stars!</KidText>
-          </View>
-          <Image source={require('../../assets/letter-lesson-bear.png')} resizeMode="contain" style={[styles.letterBearImage, !isLessonWide && styles.letterBearImageCompact]} />
         </LinearGradient>
-      </GlassCard>
+      </LinearGradient>
 
       <View pointerEvents="none" style={styles.letterLessonGround}>
         <View style={[styles.lessonHill, styles.lessonHillLeft]} />
@@ -1890,6 +1973,355 @@ const styles = StyleSheet.create({
     height: 5,
     borderRadius: 4,
     backgroundColor: colors.orange
+  },
+  whiteboardFrame: {
+    borderRadius: 34,
+    padding: 16,
+    minHeight: 650,
+    borderWidth: 2,
+    borderColor: 'rgba(143,82,28,0.28)',
+    shadowColor: '#6B3B8C',
+    shadowOpacity: 0.24,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 12 },
+    elevation: 10
+  },
+  whiteboardFrameCompact: {
+    minHeight: 500,
+    borderRadius: 24,
+    padding: 10
+  },
+  whiteboardSurface: {
+    flex: 1,
+    borderRadius: 24,
+    backgroundColor: '#FFFDFB',
+    borderWidth: 3,
+    borderColor: 'rgba(125,72,32,0.22)',
+    overflow: 'hidden'
+  },
+  whiteboardScrewTopLeft: {
+    position: 'absolute',
+    left: 20,
+    top: 20,
+    width: 13,
+    height: 13,
+    borderRadius: 7,
+    backgroundColor: '#C47C35',
+    zIndex: 3
+  },
+  whiteboardScrewTopRight: {
+    position: 'absolute',
+    right: 20,
+    top: 20,
+    width: 13,
+    height: 13,
+    borderRadius: 7,
+    backgroundColor: '#C47C35',
+    zIndex: 3
+  },
+  pinnedNote: {
+    position: 'absolute',
+    left: 38,
+    top: 54,
+    width: 176,
+    minHeight: 226,
+    backgroundColor: '#FFF4B8',
+    borderRadius: 4,
+    alignItems: 'center',
+    paddingTop: 26,
+    paddingHorizontal: 12,
+    transform: [{ rotate: '-4deg' }],
+    shadowColor: '#6B3B8C',
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 6,
+    zIndex: 5
+  },
+  pinnedNoteCompact: {
+    left: 16,
+    top: 28,
+    width: 118,
+    minHeight: 150,
+    paddingTop: 17,
+    paddingHorizontal: 7
+  },
+  pinnedNotePin: {
+    position: 'absolute',
+    top: -14,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#FF5AA4',
+    borderWidth: 3,
+    borderColor: 'rgba(255,255,255,0.72)',
+    shadowColor: '#6B3B8C',
+    shadowOpacity: 0.2,
+    shadowRadius: 7,
+    shadowOffset: { width: 0, height: 4 }
+  },
+  pinnedNoteApple: {
+    width: 86,
+    height: 72
+  },
+  pinnedNoteAppleCompact: {
+    width: 58,
+    height: 48
+  },
+  pinnedNoteText: {
+    marginTop: 12,
+    color: colors.ink,
+    fontSize: 22,
+    lineHeight: 27,
+    fontWeight: '900',
+    textAlign: 'center'
+  },
+  pinnedNoteTextCompact: {
+    marginTop: 7,
+    fontSize: 14,
+    lineHeight: 18
+  },
+  pinnedNoteWord: {
+    color: colors.purple,
+    fontSize: 30,
+    lineHeight: 36,
+    fontWeight: '900',
+    textAlign: 'center'
+  },
+  pinnedNoteWordCompact: {
+    fontSize: 19,
+    lineHeight: 24
+  },
+  whiteboardBear: {
+    position: 'absolute',
+    left: -16,
+    bottom: 4,
+    width: 250,
+    height: 202,
+    zIndex: 5
+  },
+  whiteboardBearCompact: {
+    width: 132,
+    height: 110,
+    left: -8,
+    bottom: 10
+  },
+  whiteboardTraceZone: {
+    position: 'absolute',
+    left: '28%',
+    right: '24%',
+    top: 86,
+    bottom: 92,
+    zIndex: 2
+  },
+  whiteboardTraceZoneCompact: {
+    left: '24%',
+    right: '18%',
+    top: 72,
+    bottom: 70
+  },
+  whiteboardTraceGuide: {
+    minHeight: '100%',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  boardActionDock: {
+    position: 'absolute',
+    right: 32,
+    top: 118,
+    width: 132,
+    padding: 14,
+    borderRadius: 34,
+    backgroundColor: 'rgba(255,255,255,0.82)',
+    gap: 18,
+    shadowColor: '#6B3B8C',
+    shadowOpacity: 0.16,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 8,
+    zIndex: 6
+  },
+  boardActionDockCompact: {
+    right: 10,
+    top: 94,
+    width: 78,
+    padding: 7,
+    borderRadius: 22,
+    gap: 9
+  },
+  boardActionButton: {
+    width: 104,
+    height: 104,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderWidth: 3,
+    borderColor: 'rgba(255,255,255,0.55)',
+    ...shadow
+  },
+  boardActionButtonCompact: {
+    width: 64,
+    height: 64,
+    borderRadius: 18,
+    gap: 3,
+    borderWidth: 2
+  },
+  boardActionLabel: {
+    color: colors.white,
+    fontSize: 20,
+    lineHeight: 25,
+    fontWeight: '900'
+  },
+  boardActionLabelCompact: {
+    fontSize: 10,
+    lineHeight: 13
+  },
+  markerTray: {
+    position: 'absolute',
+    left: '22%',
+    right: '22%',
+    bottom: 16,
+    minHeight: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(228,157,82,0.7)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingHorizontal: 12,
+    zIndex: 6
+  },
+  markerTrayCompact: {
+    left: '30%',
+    right: '18%',
+    bottom: 9,
+    minHeight: 24,
+    borderRadius: 12,
+    gap: 4,
+    paddingHorizontal: 6
+  },
+  markerPen: {
+    width: 62,
+    height: 16,
+    borderRadius: 8,
+    flexDirection: 'row',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(21,17,87,0.1)'
+  },
+  markerPenCompact: {
+    width: 34,
+    height: 10,
+    borderRadius: 5
+  },
+  markerCap: {
+    width: '24%'
+  },
+  markerBody: {
+    flex: 1,
+    backgroundColor: '#FFFFFF'
+  },
+  markerTip: {
+    width: '18%'
+  },
+  lessonFeedbackCard: {
+    minHeight: 134,
+    borderRadius: 24,
+    padding: 18,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 18,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.86)',
+    shadowColor: '#6B3B8C',
+    shadowOpacity: 0.16,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 7,
+    zIndex: 4
+  },
+  lessonFeedbackCardCompact: {
+    minHeight: 92,
+    borderRadius: 18,
+    padding: 10,
+    gap: 9
+  },
+  feedbackStarWrap: {
+    width: 92,
+    height: 92,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  feedbackStarWrapCompact: {
+    width: 54,
+    height: 54,
+    borderRadius: 17
+  },
+  feedbackCopy: {
+    flex: 1,
+    minWidth: 120
+  },
+  feedbackTitle: {
+    color: colors.purpleDark,
+    fontSize: 34,
+    lineHeight: 40,
+    fontWeight: '900'
+  },
+  feedbackTitleCompact: {
+    fontSize: 19,
+    lineHeight: 24
+  },
+  feedbackText: {
+    color: colors.ink,
+    fontSize: 20,
+    lineHeight: 28,
+    fontWeight: '700'
+  },
+  feedbackTextCompact: {
+    fontSize: 11,
+    lineHeight: 15
+  },
+  starsEarnedBadge: {
+    minWidth: 210,
+    minHeight: 78,
+    borderRadius: 22,
+    paddingHorizontal: 18,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.42)'
+  },
+  starsEarnedBadgeCompact: {
+    minWidth: 104,
+    minHeight: 52,
+    borderRadius: 16,
+    paddingHorizontal: 8,
+    gap: 5
+  },
+  starsEarnedLabel: {
+    color: colors.white,
+    fontSize: 16,
+    lineHeight: 20,
+    fontWeight: '900'
+  },
+  starsEarnedLabelCompact: {
+    fontSize: 9,
+    lineHeight: 12
+  },
+  starsEarnedValue: {
+    color: colors.white,
+    fontSize: 34,
+    lineHeight: 40,
+    fontWeight: '900'
+  },
+  starsEarnedValueCompact: {
+    fontSize: 19,
+    lineHeight: 23
   },
   letterLessonCard: {
     borderRadius: 38,
