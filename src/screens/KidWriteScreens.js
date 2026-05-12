@@ -72,7 +72,7 @@ function HomeMenuTile({ item, onPress, scale = 1 }) {
           ) : item.key === 'words' ? (
             <Image source={require('../../assets/home-word-cat.png')} resizeMode="contain" style={styles.homeWordAsset} />
           ) : item.key === 'games' ? (
-            <Feather name="zap" size={40} color="#5B4BEE" />
+            <Image source={require('../../assets/home-game-controller.png')} resizeMode="contain" style={styles.homeGameAsset} />
           ) : item.key === 'practice' ? (
             <Feather name="edit-3" size={40} color="#FF9B33" />
           ) : (
@@ -1015,6 +1015,10 @@ const styles = StyleSheet.create({
   homeWordAsset: {
     width: 104,
     height: 58
+  },
+  homeGameAsset: {
+    width: 104,
+    height: 62
   },
   topRow: {
     flexDirection: 'row',
