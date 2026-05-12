@@ -58,6 +58,47 @@ function ObjectGroup({ count = 5 }) {
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const letterColors = ['#7257FF', '#FF6EC7', '#28A7FF', '#34D15F', '#FF9B33', '#B85BFF'];
+const letterExamples = {
+  A: 'Apple',
+  B: 'Ball',
+  C: 'Cat',
+  D: 'Duck',
+  E: 'Elephant',
+  F: 'Fish',
+  G: 'Grapes',
+  H: 'Hat',
+  I: 'Ice cream',
+  J: 'Jam',
+  K: 'Kite',
+  L: 'Lion',
+  M: 'Moon',
+  N: 'Nest',
+  O: 'Orange',
+  P: 'Pencil',
+  Q: 'Queen',
+  R: 'Rainbow',
+  S: 'Star',
+  T: 'Tree',
+  U: 'Umbrella',
+  V: 'Violin',
+  W: 'Whale',
+  X: 'Xylophone',
+  Y: 'Yoyo',
+  Z: 'Zebra'
+};
+
+function LetterExampleVisual({ letter, word }) {
+  if (letter.toUpperCase() === 'A') {
+    return <Image source={require('../../assets/letter-lesson-apple.png')} resizeMode="contain" style={styles.letterAppleImage} />;
+  }
+
+  return (
+    <LinearGradient colors={['#FFFFFF', '#F3EEFF']} style={styles.letterExampleFallback}>
+      <KidText style={styles.letterExampleFallbackLetter}>{letter}</KidText>
+      <KidText style={styles.letterExampleFallbackWord}>{word}</KidText>
+    </LinearGradient>
+  );
+}
 
 function HomeMenuTile({ item, onPress, scale = 1 }) {
   const interaction = useRef(new Animated.Value(0)).current;
@@ -523,31 +564,85 @@ export function CategoryScreen({ go }) {
 
 export function LetterTracingScreen({ go }) {
   const { soundEnabled, setCoins, selectedLetter, letterCase, letterProgress, completeLetter } = useKidWrite();
+  const { width } = useWindowDimensions();
   const [completed, setCompleted] = useState(false);
+  const isTablet = width >= 700;
   const traceLetter = letterCase === 'lower' ? selectedLetter.toLowerCase() : selectedLetter.toUpperCase();
+  const exampleWord = letterExamples[selectedLetter.toUpperCase()] || 'Apple';
   const currentStars = letterProgress[`${letterCase}:${traceLetter}`] || 0;
-  const exampleText = traceLetter.toUpperCase() === 'A' ? `${traceLetter} is for Apple` : `Trace letter ${traceLetter}`;
+  const exampleText = `${traceLetter} is for ${exampleWord}`;
+  const earnedStars = completed ? 3 : currentStars;
   const completeTrace = () => {
     setCompleted(true);
     completeLetter(traceLetter, letterCase, 3);
     setCoins((value) => value + 5);
   };
   return (
-    <ScreenScaffold>
-      <HeaderBar title={`Letter ${traceLetter}`} onBack={() => go('letters')} onRight={() => speak(traceLetter, soundEnabled)} />
-      <StarRow earned={completed ? 3 : currentStars} />
-      <GlassCard style={styles.traceCard}>
-        <TracePad onComplete={completeTrace}>
-          <View style={styles.traceContent}>
-            <LetterTraceArt text={traceLetter} size={260} />
-            <View style={styles.exampleBlock}>
-              <AppleArt size={112} />
-              <KidText variant="section" style={styles.center}>{exampleText}</KidText>
-            </View>
+    <ScreenScaffold
+      backgroundSource={require('../../assets/home-background-pastel.png')}
+      showDecor={false}
+      style={[styles.letterLessonScreenInner, { maxWidth: isTablet ? 980 : 620 }]}
+    >
+      <View style={styles.letterLessonHeader}>
+        <IconCircle icon="arrow-left" onPress={() => go('letters')} label="Back to letters" color={colors.purple} />
+        <View style={styles.letterLessonTitleWrap}>
+          <KidText style={[styles.letterLessonTitle, !isTablet && styles.letterLessonTitleCompact]}>Letter <KidText style={[styles.letterLessonTitleAccent, !isTablet && styles.letterLessonTitleCompact]}>{traceLetter}</KidText></KidText>
+          <View style={styles.letterLessonUnderline} />
+        </View>
+        <IconCircle icon="volume-2" onPress={() => speak(traceLetter, soundEnabled)} label="Hear letter" color={colors.purple} />
+      </View>
+
+      <StarRow earned={earnedStars} size={isTablet ? 46 : 36} />
+
+      <GlassCard style={styles.letterLessonCard}>
+        <View style={styles.letterLessonMainRow}>
+          <View style={styles.letterTraceBox}>
+            <TracePad strokeColor="#8E62FF" onComplete={completeTrace}>
+              <View style={styles.letterTraceStage}>
+                <View style={styles.letterTraceHalo} />
+                <LetterTraceArt text={traceLetter} size={isTablet ? 380 : 300} accent="#A45BFF" />
+              </View>
+            </TracePad>
           </View>
-        </TracePad>
+
+          <View style={styles.letterExampleColumn}>
+            <View style={styles.letterAppleCircle}>
+              <LetterExampleVisual letter={traceLetter} word={exampleWord} />
+            </View>
+            <View style={styles.letterWordPill}>
+              <KidText style={styles.letterWordText}><KidText style={styles.letterWordAccent}>{traceLetter}</KidText> is for <KidText style={styles.letterWordAccent}>{exampleWord}</KidText></KidText>
+            </View>
+            <Pressable accessibilityRole="button" accessibilityLabel="Hear example word" onPress={() => speak(exampleText, soundEnabled)} style={styles.letterSoundButton}>
+              <Feather name="volume-2" size={28} color={colors.white} />
+            </Pressable>
+          </View>
+        </View>
+
+        <LinearGradient colors={['rgba(255,232,252,0.84)', 'rgba(255,255,255,0.72)']} style={styles.letterLearnPanel}>
+          <View style={styles.letterLearnStar}>
+            <Feather name="star" size={46} color={colors.yellow} fill={colors.yellow} />
+          </View>
+          <View style={styles.letterLearnCopy}>
+            <KidText style={styles.letterLearnTitle}>Let’s learn!</KidText>
+            <KidText style={styles.letterLearnText}>Trace the letter, listen to the sound, and earn stars!</KidText>
+          </View>
+          <Image source={require('../../assets/letter-lesson-bear.png')} resizeMode="contain" style={styles.letterBearImage} />
+        </LinearGradient>
       </GlassCard>
-      <LessonActions onReplay={() => setCompleted(false)} onSpeak={() => speak(traceLetter, soundEnabled)} onNext={() => go('letters')} />
+
+      <View style={styles.letterLessonActions}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Replay tracing" onPress={() => setCompleted(false)} style={styles.letterReplayButton}>
+          <Feather name="rotate-ccw" size={30} color={colors.white} />
+          <KidText style={styles.letterActionText}>Replay</KidText>
+        </Pressable>
+        <Pressable accessibilityRole="button" accessibilityLabel="Speak letter" onPress={() => speak(traceLetter, soundEnabled)} style={styles.letterMicButton}>
+          <Feather name="mic" size={38} color={colors.white} />
+        </Pressable>
+        <Pressable accessibilityRole="button" accessibilityLabel="Next letter" onPress={() => go('letters')} style={styles.letterNextButton}>
+          <Feather name="arrow-right" size={30} color={colors.white} />
+          <KidText style={styles.letterActionText}>Next</KidText>
+        </Pressable>
+      </View>
     </ScreenScaffold>
   );
 }
@@ -1625,6 +1720,250 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(21,17,87,0.24)',
     textShadowOffset: { width: 0, height: 3 },
     textShadowRadius: 6
+  },
+  letterLessonScreenInner: {
+    gap: 18,
+    paddingTop: 28
+  },
+  letterLessonHeader: {
+    minHeight: 76,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12
+  },
+  letterLessonTitleWrap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8
+  },
+  letterLessonTitle: {
+    color: colors.ink,
+    fontSize: 45,
+    lineHeight: 52,
+    fontWeight: '900',
+    textAlign: 'center',
+    textShadowColor: 'rgba(255,255,255,0.88)',
+    textShadowOffset: { width: 0, height: 4 },
+    textShadowRadius: 4
+  },
+  letterLessonTitleCompact: {
+    fontSize: 34,
+    lineHeight: 40
+  },
+  letterLessonTitleAccent: {
+    color: colors.purple,
+    fontWeight: '900'
+  },
+  letterLessonUnderline: {
+    width: 86,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: colors.orange
+  },
+  letterLessonCard: {
+    borderRadius: 34,
+    padding: 20,
+    gap: 18,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.9)'
+  },
+  letterLessonMainRow: {
+    minHeight: 380,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: 18
+  },
+  letterTraceBox: {
+    flex: 1.25,
+    minWidth: 280,
+    minHeight: 350,
+    borderRadius: 30,
+    overflow: 'hidden'
+  },
+  letterTraceStage: {
+    minHeight: 350,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  letterTraceHalo: {
+    position: 'absolute',
+    width: '86%',
+    height: '86%',
+    borderRadius: 999,
+    backgroundColor: 'rgba(142,98,255,0.08)'
+  },
+  letterExampleColumn: {
+    flex: 0.9,
+    minWidth: 230,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 14
+  },
+  letterAppleCircle: {
+    width: 228,
+    height: 204,
+    borderRadius: 102,
+    backgroundColor: 'rgba(142,98,255,0.08)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  letterAppleImage: {
+    width: 214,
+    height: 190
+  },
+  letterExampleFallback: {
+    width: 196,
+    height: 176,
+    borderRadius: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.92)',
+    ...shadow
+  },
+  letterExampleFallbackLetter: {
+    color: colors.purple,
+    fontSize: 96,
+    lineHeight: 104,
+    fontWeight: '900',
+    textShadowColor: 'rgba(24,23,99,0.14)',
+    textShadowOffset: { width: 0, height: 4 },
+    textShadowRadius: 4
+  },
+  letterExampleFallbackWord: {
+    color: colors.ink,
+    fontSize: 21,
+    lineHeight: 26,
+    fontWeight: '900',
+    textAlign: 'center'
+  },
+  letterWordPill: {
+    minHeight: 78,
+    minWidth: 260,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255,255,255,0.84)',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.9)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 18,
+    ...shadow
+  },
+  letterWordText: {
+    color: colors.ink,
+    fontSize: 29,
+    lineHeight: 36,
+    fontWeight: '900',
+    textAlign: 'center'
+  },
+  letterWordAccent: {
+    color: colors.purple,
+    fontWeight: '900'
+  },
+  letterSoundButton: {
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    backgroundColor: colors.purple,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 4,
+    borderColor: 'rgba(255,255,255,0.82)',
+    marginTop: -6,
+    ...shadow
+  },
+  letterLearnPanel: {
+    minHeight: 132,
+    borderRadius: 28,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    overflow: 'hidden',
+    gap: 18
+  },
+  letterLearnStar: {
+    width: 82,
+    height: 82,
+    borderRadius: 26,
+    backgroundColor: 'rgba(255,255,255,0.78)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  letterLearnCopy: {
+    flex: 1,
+    minWidth: 180,
+    zIndex: 2
+  },
+  letterLearnTitle: {
+    color: colors.purpleDark,
+    fontSize: 30,
+    lineHeight: 36,
+    fontWeight: '900'
+  },
+  letterLearnText: {
+    color: colors.ink,
+    fontSize: 18,
+    lineHeight: 26,
+    fontWeight: '700'
+  },
+  letterBearImage: {
+    width: 210,
+    height: 130,
+    marginRight: -18,
+    marginBottom: -18
+  },
+  letterLessonActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 18,
+    flexWrap: 'wrap'
+  },
+  letterReplayButton: {
+    flex: 1,
+    minWidth: 170,
+    minHeight: 76,
+    borderRadius: 38,
+    backgroundColor: colors.purple,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    ...shadow
+  },
+  letterMicButton: {
+    width: 94,
+    height: 94,
+    borderRadius: 47,
+    backgroundColor: colors.purple,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 6,
+    borderColor: 'rgba(255,255,255,0.72)',
+    ...shadow
+  },
+  letterNextButton: {
+    flex: 1,
+    minWidth: 170,
+    minHeight: 76,
+    borderRadius: 38,
+    backgroundColor: colors.green,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    ...shadow
+  },
+  letterActionText: {
+    color: colors.white,
+    fontSize: 25,
+    lineHeight: 31,
+    fontWeight: '900'
   },
   traceCard: {
     minHeight: 330,
