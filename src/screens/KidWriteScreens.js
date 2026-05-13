@@ -649,7 +649,7 @@ export function LetterTracingScreen({ go }) {
   const currentStars = letterProgress[`${letterCase}:${traceLetter}`] || 0;
   const exampleText = `${traceLetter} is for ${exampleWord}`;
   const earnedStars = completed ? 3 : Math.max(currentStars, 2);
-  const traceArtSize = isLessonWide ? Math.min(600, Math.max(500, width * 0.56)) : Math.min(510, Math.max(430, width * 0.98));
+  const traceArtSize = isLessonWide ? Math.min(640, Math.max(540, width * 0.6)) : Math.min(560, Math.max(480, width * 1.08));
   const completeTrace = () => {
     setCompleted(true);
     completeLetter(traceLetter, letterCase, 3);
@@ -2138,13 +2138,13 @@ const styles = StyleSheet.create({
     zIndex: 5
   },
   pinnedNoteCompact: {
-    left: 32,
-    top: 50,
-    width: 76,
-    minHeight: 154,
-    paddingTop: 14,
-    paddingHorizontal: 5,
-    borderRadius: 13
+    left: 26,
+    top: 44,
+    width: 60,
+    minHeight: 120,
+    paddingTop: 10,
+    paddingHorizontal: 4,
+    borderRadius: 11
   },
   pinnedNotePin: {
     position: 'absolute',
@@ -2161,10 +2161,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 }
   },
   pinnedNotePinCompact: {
-    top: -9,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
+    top: -7,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
     borderWidth: 2
   },
   pinnedNoteApple: {
@@ -2172,8 +2172,8 @@ const styles = StyleSheet.create({
     height: 74
   },
   pinnedNoteAppleCompact: {
-    width: 42,
-    height: 36
+    width: 30,
+    height: 26
   },
   pinnedNoteText: {
     marginTop: 14,
@@ -2184,9 +2184,9 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   pinnedNoteTextCompact: {
-    marginTop: 9,
-    fontSize: 10,
-    lineHeight: 13
+    marginTop: 7,
+    fontSize: 8,
+    lineHeight: 10
   },
   pinnedNoteWord: {
     color: colors.purple,
@@ -2196,8 +2196,8 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   pinnedNoteWordCompact: {
-    fontSize: 15,
-    lineHeight: 18
+    fontSize: 12,
+    lineHeight: 14
   },
   whiteboardTraceZone: {
     position: 'absolute',
@@ -2208,10 +2208,10 @@ const styles = StyleSheet.create({
     zIndex: 2
   },
   whiteboardTraceZoneCompact: {
-    left: '21%',
-    right: '14%',
-    top: 28,
-    bottom: 42
+    left: '11%',
+    right: '11%',
+    top: 12,
+    bottom: 22
   },
   whiteboardTraceGuide: {
     height: '100%',
@@ -2236,12 +2236,12 @@ const styles = StyleSheet.create({
     zIndex: 6
   },
   boardActionDockCompact: {
-    right: 20,
-    top: 96,
-    width: 76,
-    padding: 7,
-    borderRadius: 22,
-    gap: 9
+    right: 16,
+    top: 92,
+    width: 60,
+    padding: 6,
+    borderRadius: 18,
+    gap: 8
   },
   boardActionButton: {
     width: 100,
@@ -2255,9 +2255,9 @@ const styles = StyleSheet.create({
     ...shadow
   },
   boardActionButtonCompact: {
-    width: 58,
-    height: 58,
-    borderRadius: 17,
+    width: 48,
+    height: 48,
+    borderRadius: 14,
     gap: 2,
     borderWidth: 2
   },
@@ -2268,8 +2268,8 @@ const styles = StyleSheet.create({
     fontWeight: '900'
   },
   boardActionLabelCompact: {
-    fontSize: 9,
-    lineHeight: 12
+    fontSize: 8,
+    lineHeight: 10
   },
   lessonFeedbackCard: {
     minHeight: 138,
