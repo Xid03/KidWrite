@@ -101,7 +101,7 @@ function LetterExampleVisual({ letter, word, compact = false }) {
   );
 }
 
-function LessonTraceGuide({ letter = 'A', size = 420 }) {
+function LessonTraceGuide({ letter = 'A', size = 420, completed = false }) {
   return (
     <Svg width={size} height={size * 0.86} viewBox="0 0 360 310">
       <Circle cx="164" cy="154" r="136" fill="#8E62FF" opacity="0.08" />
@@ -124,19 +124,23 @@ function LessonTraceGuide({ letter = 'A', size = 420 }) {
       />
       <Line x1="132" y1="196" x2="222" y2="196" stroke="#FFFFFF" strokeWidth="44" strokeLinecap="round" />
       <Line x1="132" y1="196" x2="222" y2="196" stroke="#D5D6DE" strokeWidth="16" strokeLinecap="round" strokeDasharray="16 18" />
-      <Path d="M90 276L176 50" stroke="#8E55F7" strokeWidth="32" strokeLinecap="round" />
-      <Path d="M102 250L88 276L116 263" fill="#8E55F7" />
-      <Circle cx="90" cy="276" r="18" fill="#7A3EF2" stroke="#FFFFFF" strokeWidth="5" />
+      {completed ? (
+        <>
+          <Path d="M90 276L176 50L270 276" stroke="#8E55F7" strokeWidth="32" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <Line x1="132" y1="196" x2="222" y2="196" stroke="#8E55F7" strokeWidth="28" strokeLinecap="round" />
+        </>
+      ) : null}
       <Circle cx="176" cy="50" r="22" fill="#7A3EF2" stroke="#FFFFFF" strokeWidth="4" />
       <SvgText x="169" y="59" fontSize="24" fontWeight="900" fill="#FFFFFF">1</SvgText>
       <Circle cx="132" cy="196" r="14" fill="#C8C8D4" stroke="#FFFFFF" strokeWidth="4" opacity="0.9" />
       <SvgText x="127" y="202" fontSize="16" fontWeight="900" fill="#FFFFFF">2</SvgText>
       <Circle cx="270" cy="276" r="14" fill="#C8C8D4" stroke="#FFFFFF" strokeWidth="4" opacity="0.9" />
       <SvgText x="265" y="282" fontSize="16" fontWeight="900" fill="#FFFFFF">3</SvgText>
-      <Circle cx="285" cy="276" r="10" fill="#BFC0C8" />
-      <Path d="M108 236L120 243L114 230Z" fill="#5D38D9" opacity="0.55" />
-      <Path d="M116 220L128 226L121 211Z" fill="#5D38D9" opacity="0.36" />
-      <Path d="M126 205L138 211L132 196Z" fill="#5D38D9" opacity="0.24" />
+      <Path d="M99 244L88 276L119 260" fill="#B8BBC6" opacity="0.9" />
+      <Path d="M112 232L124 238L118 224Z" fill="#B8BBC6" opacity="0.55" />
+      <Path d="M122 216L134 222L128 208Z" fill="#B8BBC6" opacity="0.38" />
+      <Path d="M198 196L230 196L206 218" fill="none" stroke="#B8BBC6" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" opacity="0.62" />
+      <Path d="M260 244L270 276L239 260" fill="#B8BBC6" opacity="0.78" />
       <Polygon points="72,96 80,112 98,115 84,127 88,145 72,136 56,145 60,127 46,115 64,112" fill="#B782FF" opacity="0.45" />
       <Polygon points="48,168 54,180 68,182 58,192 61,206 48,199 35,206 38,192 28,182 42,180" fill="#B782FF" opacity="0.35" />
     </Svg>
@@ -709,9 +713,9 @@ export function LetterTracingScreen({ go }) {
           <PinnedAppleNote letter={traceLetter} word={exampleWord} compact={!isLessonWide} />
           <Image source={require('../../assets/letter-lesson-bear.png')} resizeMode="contain" style={[styles.whiteboardBear, !isLessonWide && styles.whiteboardBearCompact]} />
           <View style={[styles.whiteboardTraceZone, !isLessonWide && styles.whiteboardTraceZoneCompact]}>
-            <TracePad strokeColor="#8E62FF" onComplete={completeTrace} resetKey={traceResetKey}>
+            <TracePad strokeColor="#8E62FF" onComplete={completeTrace} resetKey={traceResetKey} minPointsToComplete={36}>
               <View style={styles.whiteboardTraceGuide}>
-                <LessonTraceGuide letter={traceLetter} size={traceArtSize} />
+                <LessonTraceGuide letter={traceLetter} size={traceArtSize} completed={completed} />
               </View>
             </TracePad>
           </View>
