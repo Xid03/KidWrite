@@ -105,6 +105,24 @@ function LessonTraceGuide({ letter = 'A', size = 420, completed = false, activeH
   return (
     <Svg width={size} height={size * 0.86} viewBox="0 0 360 310">
       <Circle cx="180" cy="155" r="170" fill="#8E62FF" opacity="0.08" />
+      <Path
+        d="M90 276L176 50L270 276M132 196H222"
+        fill="none"
+        stroke="#8E62FF"
+        strokeWidth="38"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.12"
+      />
+      <Path
+        d="M90 276L176 50L270 276M132 196H222"
+        fill="none"
+        stroke="#FFFFFF"
+        strokeWidth="18"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.58"
+      />
       <Circle cx="176" cy="50" r="22" fill="#7A3EF2" stroke="#FFFFFF" strokeWidth="4" />
       <SvgText x="169" y="59" fontSize="24" fontWeight="900" fill="#FFFFFF">1</SvgText>
       <Circle cx="132" cy="196" r="16" fill="#B6AFD5" stroke="#FFFFFF" strokeWidth="4" opacity="0.95" />
