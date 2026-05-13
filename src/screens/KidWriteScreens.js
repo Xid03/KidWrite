@@ -658,7 +658,7 @@ export function LetterTracingScreen({ go }) {
   const currentStars = letterProgress[`${letterCase}:${traceLetter}`] || 0;
   const exampleText = `${traceLetter} is for ${exampleWord}`;
   const earnedStars = completed ? 3 : currentStars;
-  const traceArtSize = isLessonWide ? Math.min(470, Math.max(380, width * 0.42)) : Math.min(270, Math.max(210, width * 0.48));
+  const traceArtSize = isLessonWide ? Math.min(430, Math.max(360, width * 0.38)) : Math.min(240, Math.max(190, width * 0.42));
   const completeTrace = () => {
     setCompleted(true);
     completeLetter(traceLetter, letterCase, 3);
@@ -2025,15 +2025,15 @@ const styles = StyleSheet.create({
   },
   pinnedNote: {
     position: 'absolute',
-    left: 38,
-    top: 54,
-    width: 176,
-    minHeight: 226,
+    left: 30,
+    top: 34,
+    width: 126,
+    minHeight: 164,
     backgroundColor: '#FFF4B8',
     borderRadius: 4,
     alignItems: 'center',
-    paddingTop: 26,
-    paddingHorizontal: 12,
+    paddingTop: 20,
+    paddingHorizontal: 8,
     transform: [{ rotate: '-4deg' }],
     shadowColor: '#6B3B8C',
     shadowOpacity: 0.18,
@@ -2043,19 +2043,19 @@ const styles = StyleSheet.create({
     zIndex: 5
   },
   pinnedNoteCompact: {
-    left: 16,
-    top: 28,
-    width: 118,
-    minHeight: 150,
-    paddingTop: 17,
-    paddingHorizontal: 7
+    left: 12,
+    top: 18,
+    width: 88,
+    minHeight: 112,
+    paddingTop: 12,
+    paddingHorizontal: 5
   },
   pinnedNotePin: {
     position: 'absolute',
-    top: -14,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    top: -11,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: '#FF5AA4',
     borderWidth: 3,
     borderColor: 'rgba(255,255,255,0.72)',
@@ -2065,36 +2065,36 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 }
   },
   pinnedNoteApple: {
-    width: 86,
-    height: 72
-  },
-  pinnedNoteAppleCompact: {
-    width: 58,
+    width: 56,
     height: 48
   },
+  pinnedNoteAppleCompact: {
+    width: 36,
+    height: 31
+  },
   pinnedNoteText: {
-    marginTop: 12,
+    marginTop: 8,
     color: colors.ink,
-    fontSize: 22,
-    lineHeight: 27,
+    fontSize: 16,
+    lineHeight: 20,
     fontWeight: '900',
     textAlign: 'center'
   },
   pinnedNoteTextCompact: {
-    marginTop: 7,
-    fontSize: 14,
-    lineHeight: 18
+    marginTop: 5,
+    fontSize: 10,
+    lineHeight: 13
   },
   pinnedNoteWord: {
     color: colors.purple,
-    fontSize: 30,
-    lineHeight: 36,
+    fontSize: 21,
+    lineHeight: 26,
     fontWeight: '900',
     textAlign: 'center'
   },
   pinnedNoteWordCompact: {
-    fontSize: 19,
-    lineHeight: 24
+    fontSize: 14,
+    lineHeight: 18
   },
   whiteboardBear: {
     position: 'absolute',
@@ -2112,20 +2112,21 @@ const styles = StyleSheet.create({
   },
   whiteboardTraceZone: {
     position: 'absolute',
-    left: '28%',
-    right: '24%',
-    top: 86,
-    bottom: 92,
+    left: '20%',
+    right: '17%',
+    top: 52,
+    bottom: 84,
     zIndex: 2
   },
   whiteboardTraceZoneCompact: {
-    left: '24%',
+    left: '22%',
     right: '18%',
-    top: 72,
-    bottom: 70
+    top: 46,
+    bottom: 62
   },
   whiteboardTraceGuide: {
-    minHeight: '100%',
+    height: '100%',
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center'
   },
