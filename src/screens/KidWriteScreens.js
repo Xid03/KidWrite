@@ -175,21 +175,6 @@ function BoardActionButton({ icon, label, colors: buttonColors, onPress, compact
   );
 }
 
-function MarkerSet({ compact = false }) {
-  const markerColors = ['#7D4EFF', '#FF4D9D', '#FFD84D', '#2CA5FF', '#42C95E', '#31364F'];
-  return (
-    <View style={[styles.markerTray, compact && styles.markerTrayCompact]}>
-      {markerColors.map((markerColor, index) => (
-        <View key={markerColor} style={[styles.markerPen, compact && styles.markerPenCompact, { transform: [{ rotate: `${index % 2 ? 2 : -2}deg` }] }]}>
-          <View style={[styles.markerCap, { backgroundColor: markerColor }]} />
-          <View style={styles.markerBody} />
-          <View style={[styles.markerTip, { backgroundColor: markerColor }]} />
-        </View>
-      ))}
-    </View>
-  );
-}
-
 function HomeMenuTile({ item, onPress, scale = 1 }) {
   const interaction = useRef(new Animated.Value(0)).current;
   const hovered = useRef(false);
@@ -732,7 +717,6 @@ export function LetterTracingScreen({ go }) {
         <View style={styles.whiteboardScrewTopRight} />
         <View style={styles.whiteboardSurface}>
           <PinnedAppleNote letter={traceLetter} word={exampleWord} compact={!isLessonWide} />
-          <Image source={require('../../assets/letter-trace-bear-pencil.png')} resizeMode="contain" style={[styles.whiteboardBear, !isLessonWide && styles.whiteboardBearCompact]} />
           <View style={[styles.whiteboardTraceZone, !isLessonWide && styles.whiteboardTraceZoneCompact]}>
             <TracePad strokeColor="#8E62FF" onComplete={completeTrace} resetKey={traceResetKey} minPointsToComplete={36}>
               <View style={styles.whiteboardTraceGuide}>
@@ -745,7 +729,6 @@ export function LetterTracingScreen({ go }) {
             <BoardActionButton icon="lightbulb" label="Hint" colors={['#FFD957', '#FFB621']} onPress={() => speak('Start at the top and trace down the purple line.', soundEnabled)} compact={!isLessonWide} />
             <BoardActionButton icon="rotate-ccw" label="Replay" colors={['#42AEFF', '#2388E9']} onPress={replayTrace} compact={!isLessonWide} />
           </View>
-          <MarkerSet compact={!isLessonWide} />
         </View>
       </LinearGradient>
 
@@ -2216,20 +2199,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 18
   },
-  whiteboardBear: {
-    position: 'absolute',
-    left: -56,
-    bottom: -10,
-    width: 278,
-    height: 230,
-    zIndex: 5
-  },
-  whiteboardBearCompact: {
-    width: 0,
-    height: 0,
-    left: 0,
-    bottom: 0
-  },
   whiteboardTraceZone: {
     position: 'absolute',
     left: '23%',
@@ -2301,54 +2270,6 @@ const styles = StyleSheet.create({
   boardActionLabelCompact: {
     fontSize: 9,
     lineHeight: 12
-  },
-  markerTray: {
-    position: 'absolute',
-    left: '22%',
-    right: '22%',
-    bottom: 12,
-    minHeight: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(145,96,255,0.42)',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    paddingHorizontal: 12,
-    zIndex: 6
-  },
-  markerTrayCompact: {
-    left: '30%',
-    right: '28%',
-    bottom: 10,
-    minHeight: 24,
-    borderRadius: 12,
-    gap: 4,
-    paddingHorizontal: 6
-  },
-  markerPen: {
-    width: 68,
-    height: 17,
-    borderRadius: 9,
-    flexDirection: 'row',
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(21,17,87,0.1)'
-  },
-  markerPenCompact: {
-    width: 36,
-    height: 10,
-    borderRadius: 6
-  },
-  markerCap: {
-    width: '24%'
-  },
-  markerBody: {
-    flex: 1,
-    backgroundColor: '#FFFFFF'
-  },
-  markerTip: {
-    width: '18%'
   },
   lessonFeedbackCard: {
     minHeight: 138,
