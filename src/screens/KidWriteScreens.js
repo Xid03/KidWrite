@@ -104,49 +104,13 @@ function LetterExampleVisual({ letter, word, compact = false }) {
 function LessonTraceGuide({ letter = 'A', size = 420, completed = false, activeHint = true }) {
   return (
     <Svg width={size} height={size * 0.86} viewBox="0 0 360 310">
-      <Circle cx="164" cy="154" r="136" fill="#8E62FF" opacity="0.08" />
-      <Path
-        d="M90 276L176 50L270 276"
-        fill="none"
-        stroke="#FFFFFF"
-        strokeWidth="48"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <Path
-        d="M90 276L176 50L270 276"
-        fill="none"
-        stroke="#D5D6DE"
-        strokeWidth="18"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeDasharray="14 20"
-      />
-      <Line x1="132" y1="196" x2="222" y2="196" stroke="#FFFFFF" strokeWidth="44" strokeLinecap="round" />
-      <Line x1="132" y1="196" x2="222" y2="196" stroke="#D5D6DE" strokeWidth="16" strokeLinecap="round" strokeDasharray="16 18" />
-      {activeHint || completed ? (
-        <>
-          <Path d="M90 276L176 50" stroke="#8E55F7" strokeWidth="32" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-          <Path d="M160 75L176 50L183 80" fill="none" stroke="#8E55F7" strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" />
-          {completed ? (
-            <>
-              <Path d="M176 50L270 276" stroke="#8E55F7" strokeWidth="32" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-              <Line x1="132" y1="196" x2="222" y2="196" stroke="#8E55F7" strokeWidth="28" strokeLinecap="round" />
-            </>
-          ) : null}
-        </>
-      ) : null}
+      <Circle cx="180" cy="155" r="170" fill="#8E62FF" opacity="0.08" />
       <Circle cx="176" cy="50" r="22" fill="#7A3EF2" stroke="#FFFFFF" strokeWidth="4" />
       <SvgText x="169" y="59" fontSize="24" fontWeight="900" fill="#FFFFFF">1</SvgText>
-      <Circle cx="132" cy="196" r="14" fill="#C8C8D4" stroke="#FFFFFF" strokeWidth="4" opacity="0.9" />
+      <Circle cx="132" cy="196" r="16" fill="#B6AFD5" stroke="#FFFFFF" strokeWidth="4" opacity="0.95" />
       <SvgText x="127" y="202" fontSize="16" fontWeight="900" fill="#FFFFFF">2</SvgText>
-      <Circle cx="270" cy="276" r="14" fill="#C8C8D4" stroke="#FFFFFF" strokeWidth="4" opacity="0.9" />
+      <Circle cx="270" cy="276" r="16" fill="#B6AFD5" stroke="#FFFFFF" strokeWidth="4" opacity="0.95" />
       <SvgText x="265" y="282" fontSize="16" fontWeight="900" fill="#FFFFFF">3</SvgText>
-      <Path d="M99 244L88 276L119 260" fill="#B8BBC6" opacity="0.9" />
-      <Path d="M112 232L124 238L118 224Z" fill="#B8BBC6" opacity="0.55" />
-      <Path d="M122 216L134 222L128 208Z" fill="#B8BBC6" opacity="0.38" />
-      <Path d="M198 196L230 196L206 218" fill="none" stroke="#B8BBC6" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" opacity="0.62" />
-      <Path d="M260 244L270 276L239 260" fill="#B8BBC6" opacity="0.78" />
       <Polygon points="72,96 80,112 98,115 84,127 88,145 72,136 56,145 60,127 46,115 64,112" fill="#B782FF" opacity="0.45" />
       <Polygon points="48,168 54,180 68,182 58,192 61,206 48,199 35,206 38,192 28,182 42,180" fill="#B782FF" opacity="0.35" />
     </Svg>
