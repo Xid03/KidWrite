@@ -649,7 +649,7 @@ export function LetterTracingScreen({ go }) {
   const currentStars = letterProgress[`${letterCase}:${traceLetter}`] || 0;
   const exampleText = `${traceLetter} is for ${exampleWord}`;
   const earnedStars = completed ? 3 : Math.max(currentStars, 2);
-  const traceArtSize = isLessonWide ? Math.min(690, Math.max(590, width * 0.65)) : Math.min(660, Math.max(560, width * 1.22));
+  const traceArtSize = isLessonWide ? Math.min(760, Math.max(660, width * 0.72)) : Math.min(720, Math.max(620, width * 1.34));
   const completeTrace = () => {
     setCompleted(true);
     completeLetter(traceLetter, letterCase, 3);
@@ -718,7 +718,7 @@ export function LetterTracingScreen({ go }) {
         <View style={styles.whiteboardSurface}>
           <PinnedAppleNote letter={traceLetter} word={exampleWord} compact={!isLessonWide} />
           <View style={[styles.whiteboardTraceZone, !isLessonWide && styles.whiteboardTraceZoneCompact]}>
-            <TracePad strokeColor="#8E62FF" onComplete={completeTrace} resetKey={traceResetKey} minPointsToComplete={36}>
+            <TracePad strokeColor="#8E62FF" onComplete={completeTrace} resetKey={traceResetKey} minPointsToComplete={36} style={styles.whiteboardTracePad}>
               <View style={styles.whiteboardTraceGuide}>
                 <LessonTraceGuide letter={traceLetter} size={traceArtSize} completed={completed} activeHint />
               </View>
@@ -2201,17 +2201,22 @@ const styles = StyleSheet.create({
   },
   whiteboardTraceZone: {
     position: 'absolute',
-    left: '23%',
-    right: '19%',
-    top: 42,
-    bottom: 66,
+    left: '16%',
+    right: '13%',
+    top: 8,
+    bottom: 16,
     zIndex: 2
   },
   whiteboardTraceZoneCompact: {
-    left: '3%',
-    right: '8%',
-    top: -18,
-    bottom: -28
+    left: '-4%',
+    right: '-2%',
+    top: -56,
+    bottom: -72
+  },
+  whiteboardTracePad: {
+    flex: 1,
+    height: '100%',
+    minHeight: '100%'
   },
   whiteboardTraceGuide: {
     height: '100%',

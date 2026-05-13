@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PanResponder, StyleSheet, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-export function TracePad({ children, strokeColor = '#FF5B57', onComplete, resetKey, minPointsToComplete = 28 }) {
+export function TracePad({ children, strokeColor = '#FF5B57', onComplete, resetKey, minPointsToComplete = 28, style }) {
   const [paths, setPaths] = useState([]);
   const [sparklePoint, setSparklePoint] = useState(null);
   const current = useRef([]);
@@ -45,7 +45,7 @@ export function TracePad({ children, strokeColor = '#FF5B57', onComplete, resetK
   );
 
   return (
-    <View style={styles.pad} {...responder.panHandlers}>
+    <View style={[styles.pad, style]} {...responder.panHandlers}>
       <View pointerEvents="none" style={StyleSheet.absoluteFill}>{children}</View>
       <Svg pointerEvents="none" width="100%" height="100%" style={StyleSheet.absoluteFill}>
         {paths.map((path, index) => (
