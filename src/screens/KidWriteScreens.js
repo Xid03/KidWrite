@@ -666,16 +666,21 @@ export function LetterTracingScreen({ go }) {
     const nx = x / Math.max(1, padWidth);
     const ny = y / Math.max(1, padHeight);
     const near = (targetX, targetY, radius = 0.18) => Math.hypot(nx - targetX, ny - targetY) <= radius;
+    const nearStart = near(0.5, 0.18, 0.26) || (nx >= 0.34 && nx <= 0.66 && ny <= 0.34);
+    const nearMiddle = near(0.38, 0.61, 0.24) || (nx >= 0.24 && nx <= 0.58 && ny >= 0.43 && ny <= 0.76);
+    const nearEnd = near(0.74, 0.88, 0.28) || (nx >= 0.56 && nx <= 0.92 && ny >= 0.66);
 
     if (phase === 'start') {
       setShowSuccess(false);
-      activeTraceRef.current = near(0.5, 0.18, 0.2);
-      setTraceStage(activeTraceRef.current ? 2 : 1);
-      return;
-    }
+      if (traceStepRef.current >= 3 && nearMiddle) {
+        activeTraceRef.current = true;
+        return;
+      }
 
-    if (phase === 'end') {
-      activeTraceRef.current = false;
+      activeTraceRef.current = nearStart;
+      if (activeTraceRef.current) {
+        setTraceStage(Math.max(traceStepRef.current, 2));
+      }
       return;
     }
 
@@ -683,18 +688,20 @@ export function LetterTracingScreen({ go }) {
       return;
     }
 
-    if (traceStepRef.current === 1 && near(0.5, 0.18, 0.2)) {
+    if (traceStepRef.current === 1 && nearStart) {
       setTraceStage(2);
-      return;
     }
 
-    if (traceStepRef.current === 2 && near(0.38, 0.61, 0.18)) {
+    if (traceStepRef.current <= 2 && nearMiddle) {
       setTraceStage(3);
-      return;
     }
 
-    if (traceStepRef.current === 3 && near(0.74, 0.88, 0.2)) {
+    if (traceStepRef.current >= 3 && nearEnd) {
       completeTrace();
+    }
+
+    if (phase === 'end') {
+      activeTraceRef.current = false;
     }
   };
   return (

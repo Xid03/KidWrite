@@ -26,7 +26,7 @@ export function TracePad({ children, strokeColor = '#FF5B57', onComplete, onPoin
         onPanResponderGrant: (event) => {
           const { locationX, locationY } = event.nativeEvent;
           current.current = [`M${locationX.toFixed(1)} ${locationY.toFixed(1)}`];
-          pointCount.current += 1;
+          pointCount.current = 1;
           lastPoint.current = { x: locationX, y: locationY };
           setSparklePoint({ x: locationX, y: locationY });
           onPoint?.({ ...size.current, phase: 'start', x: locationX, y: locationY });
@@ -47,6 +47,8 @@ export function TracePad({ children, strokeColor = '#FF5B57', onComplete, onPoin
           if (pointCount.current >= minPointsToComplete) {
             onComplete?.();
           }
+          current.current = [];
+          pointCount.current = 0;
         }
       }),
     [minPointsToComplete, onComplete, onPoint]
