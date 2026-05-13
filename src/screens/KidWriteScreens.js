@@ -101,7 +101,7 @@ function LetterExampleVisual({ letter, word, compact = false }) {
   );
 }
 
-function LessonTraceGuide({ letter = 'A', size = 420, completed = false }) {
+function LessonTraceGuide({ letter = 'A', size = 420, completed = false, activeHint = true }) {
   return (
     <Svg width={size} height={size * 0.86} viewBox="0 0 360 310">
       <Circle cx="164" cy="154" r="136" fill="#8E62FF" opacity="0.08" />
@@ -124,10 +124,16 @@ function LessonTraceGuide({ letter = 'A', size = 420, completed = false }) {
       />
       <Line x1="132" y1="196" x2="222" y2="196" stroke="#FFFFFF" strokeWidth="44" strokeLinecap="round" />
       <Line x1="132" y1="196" x2="222" y2="196" stroke="#D5D6DE" strokeWidth="16" strokeLinecap="round" strokeDasharray="16 18" />
-      {completed ? (
+      {activeHint || completed ? (
         <>
-          <Path d="M90 276L176 50L270 276" stroke="#8E55F7" strokeWidth="32" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-          <Line x1="132" y1="196" x2="222" y2="196" stroke="#8E55F7" strokeWidth="28" strokeLinecap="round" />
+          <Path d="M90 276L176 50" stroke="#8E55F7" strokeWidth="32" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <Path d="M160 75L176 50L183 80" fill="none" stroke="#8E55F7" strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" />
+          {completed ? (
+            <>
+              <Path d="M176 50L270 276" stroke="#8E55F7" strokeWidth="32" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              <Line x1="132" y1="196" x2="222" y2="196" stroke="#8E55F7" strokeWidth="28" strokeLinecap="round" />
+            </>
+          ) : null}
         </>
       ) : null}
       <Circle cx="176" cy="50" r="22" fill="#7A3EF2" stroke="#FFFFFF" strokeWidth="4" />
@@ -658,7 +664,7 @@ export function LetterTracingScreen({ go }) {
   const currentStars = letterProgress[`${letterCase}:${traceLetter}`] || 0;
   const exampleText = `${traceLetter} is for ${exampleWord}`;
   const earnedStars = completed ? 3 : Math.max(currentStars, 2);
-  const traceArtSize = isLessonWide ? Math.min(520, Math.max(430, width * 0.48)) : Math.min(460, Math.max(390, width * 0.92));
+  const traceArtSize = isLessonWide ? Math.min(600, Math.max(500, width * 0.56)) : Math.min(510, Math.max(430, width * 0.98));
   const completeTrace = () => {
     setCompleted(true);
     completeLetter(traceLetter, letterCase, 3);
@@ -671,7 +677,7 @@ export function LetterTracingScreen({ go }) {
   return (
     <ScreenScaffold
       bottomInset={false}
-      backgroundColors={['#7ED0FF', '#BFEAFF', '#F4D8FF']}
+      backgroundColors={['#F9FCFF', '#F6FAFF', '#F8F4FF']}
       showDecor={false}
       style={[styles.letterLessonScreenInner, { maxWidth: isTablet ? 1080 : 620 }]}
     >
@@ -706,7 +712,22 @@ export function LetterTracingScreen({ go }) {
 
       <StarRow earned={earnedStars} size={isTablet ? 52 : 38} />
 
-      <LinearGradient colors={['#F6BA73', '#D88C45']} style={[styles.whiteboardFrame, !isLessonWide && styles.whiteboardFrameCompact]}>
+      <LinearGradient colors={['rgba(255,255,255,0.92)', 'rgba(247,241,255,0.92)']} style={[styles.lessonPromptCard, !isLessonWide && styles.lessonPromptCardCompact]}>
+        <Image source={require('../../assets/letter-trace-bear-pencil.png')} resizeMode="contain" style={[styles.lessonPromptBear, !isLessonWide && styles.lessonPromptBearCompact]} />
+        <View style={styles.lessonPromptCopy}>
+          <KidText style={[styles.lessonPromptTitle, !isLessonWide && styles.lessonPromptTitleCompact]}>Let’s write the letter {traceLetter}</KidText>
+          <KidText style={[styles.lessonPromptText, !isLessonWide && styles.lessonPromptTextCompact]}>Follow the arrows and trace the letter.</KidText>
+        </View>
+        <LinearGradient colors={['#FFFFFF', '#FCFBFF']} style={[styles.lessonPromptBadge, !isLessonWide && styles.lessonPromptBadgeCompact]}>
+          <Image source={require('../../assets/letter-trace-smiling-star.png')} resizeMode="contain" style={[styles.lessonPromptBadgeStar, !isLessonWide && styles.lessonPromptBadgeStarCompact]} />
+          <View>
+            <KidText style={[styles.lessonPromptBadgeLabel, !isLessonWide && styles.lessonPromptBadgeLabelCompact]}>Stars Earned</KidText>
+            <KidText style={[styles.lessonPromptBadgeValue, !isLessonWide && styles.lessonPromptBadgeValueCompact]}>{earnedStars} / 3</KidText>
+          </View>
+        </LinearGradient>
+      </LinearGradient>
+
+      <LinearGradient colors={['#A678FF', '#7857E9']} style={[styles.whiteboardFrame, !isLessonWide && styles.whiteboardFrameCompact]}>
         <View style={styles.whiteboardScrewTopLeft} />
         <View style={styles.whiteboardScrewTopRight} />
         <View style={styles.whiteboardSurface}>
@@ -715,7 +736,7 @@ export function LetterTracingScreen({ go }) {
           <View style={[styles.whiteboardTraceZone, !isLessonWide && styles.whiteboardTraceZoneCompact]}>
             <TracePad strokeColor="#8E62FF" onComplete={completeTrace} resetKey={traceResetKey} minPointsToComplete={36}>
               <View style={styles.whiteboardTraceGuide}>
-                <LessonTraceGuide letter={traceLetter} size={traceArtSize} completed={completed} />
+                <LessonTraceGuide letter={traceLetter} size={traceArtSize} completed={completed} activeHint />
               </View>
             </TracePad>
           </View>
@@ -728,25 +749,6 @@ export function LetterTracingScreen({ go }) {
         </View>
       </LinearGradient>
 
-      <LinearGradient colors={['rgba(255,255,255,0.9)', 'rgba(243,235,255,0.92)']} style={[styles.lessonFeedbackCard, !isLessonWide && styles.lessonFeedbackCardCompact]}>
-        <View style={styles.feedbackPinLeft} />
-        <View style={styles.feedbackPinRight} />
-        <View style={[styles.feedbackStarWrap, !isLessonWide && styles.feedbackStarWrapCompact]}>
-          <Image source={require('../../assets/letter-trace-smiling-star.png')} resizeMode="contain" style={[styles.feedbackStarImage, !isLessonWide && styles.feedbackStarImageCompact]} />
-        </View>
-        <View style={styles.feedbackCopy}>
-          <KidText style={[styles.feedbackTitle, !isLessonWide && styles.feedbackTitleCompact]}>{completed ? 'Great job!' : 'Let’s trace!'}</KidText>
-          <KidText style={[styles.feedbackText, !isLessonWide && styles.feedbackTextCompact]}>{completed ? 'Keep tracing to earn more stars!' : 'Follow the purple stroke and earn stars!'}</KidText>
-        </View>
-        <LinearGradient colors={['#B975FF', '#7445EF']} style={[styles.starsEarnedBadge, !isLessonWide && styles.starsEarnedBadgeCompact]}>
-          <Image source={require('../../assets/letter-trace-smiling-star.png')} resizeMode="contain" style={[styles.starsEarnedIcon, !isLessonWide && styles.starsEarnedIconCompact]} />
-          <View>
-            <KidText style={[styles.starsEarnedLabel, !isLessonWide && styles.starsEarnedLabelCompact]}>Stars Earned</KidText>
-            <KidText style={[styles.starsEarnedValue, !isLessonWide && styles.starsEarnedValueCompact]}>{earnedStars} / 3</KidText>
-          </View>
-        </LinearGradient>
-      </LinearGradient>
-
       <View pointerEvents="none" style={styles.letterLessonGround}>
         <View style={[styles.lessonHill, styles.lessonHillLeft]} />
         <View style={[styles.lessonHill, styles.lessonHillMiddle]} />
@@ -755,18 +757,18 @@ export function LetterTracingScreen({ go }) {
 
       <View style={[styles.letterLessonActions, !isLessonWide && styles.letterLessonActionsCompact]}>
         <Pressable accessibilityRole="button" accessibilityLabel="Replay tracing" onPress={replayTrace} style={[styles.letterActionPress, !isLessonWide && styles.letterActionPressCompact]}>
-          <LinearGradient colors={['#9B55FF', '#643BEB']} style={[styles.letterReplayButton, !isLessonWide && styles.letterActionButtonCompact]}>
-            <Feather name="rotate-ccw" size={isLessonWide ? 30 : 22} color={colors.white} />
-            <KidText style={[styles.letterActionText, !isLessonWide && styles.letterActionTextCompact]}>Replay</KidText>
+          <LinearGradient colors={['#FFFFFF', '#FCFBFF']} style={[styles.letterReplayButton, !isLessonWide && styles.letterActionButtonCompact]}>
+            <Feather name="rotate-ccw" size={isLessonWide ? 30 : 22} color={colors.purple} />
+            <KidText style={[styles.letterActionText, styles.letterActionTextPurple, !isLessonWide && styles.letterActionTextCompact]}>Replay</KidText>
           </LinearGradient>
         </Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel="Speak letter" onPress={() => speak(traceLetter, soundEnabled)}>
-          <LinearGradient colors={['#9B63FF', '#5D39E8']} style={[styles.letterMicButton, !isLessonWide && styles.letterMicButtonCompact]}>
-            <Feather name="mic" size={isLessonWide ? 38 : 28} color={colors.white} />
+          <LinearGradient colors={['#FFFFFF', '#FCFBFF']} style={[styles.letterMicButton, !isLessonWide && styles.letterMicButtonCompact]}>
+            <Feather name="mic" size={isLessonWide ? 38 : 28} color={colors.purple} />
           </LinearGradient>
         </Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel="Next letter" onPress={() => go('letters')} style={[styles.letterActionPress, !isLessonWide && styles.letterActionPressCompact]}>
-          <LinearGradient colors={['#40DD68', '#18B948']} style={[styles.letterNextButton, !isLessonWide && styles.letterActionButtonCompact]}>
+          <LinearGradient colors={['#A967FF', '#7B43ED']} style={[styles.letterNextButton, !isLessonWide && styles.letterActionButtonCompact]}>
             <Feather name="arrow-right" size={isLessonWide ? 30 : 22} color={colors.white} />
             <KidText style={[styles.letterActionText, !isLessonWide && styles.letterActionTextCompact]}>Next</KidText>
           </LinearGradient>
@@ -1852,8 +1854,8 @@ const styles = StyleSheet.create({
   },
   letterLessonScreenInner: {
     position: 'relative',
-    gap: 12,
-    paddingTop: 8,
+    gap: 18,
+    paddingTop: 18,
     paddingBottom: 18,
     overflow: 'hidden'
   },
@@ -1929,7 +1931,7 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '-8deg' }]
   },
   letterLessonHeader: {
-    minHeight: 76,
+    minHeight: 82,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -1958,8 +1960,8 @@ const styles = StyleSheet.create({
     textShadowRadius: 4
   },
   letterLessonTitleCompact: {
-    fontSize: 37,
-    lineHeight: 43
+    fontSize: 40,
+    lineHeight: 46
   },
   letterLessonTitleAccent: {
     color: colors.purple,
@@ -1971,30 +1973,138 @@ const styles = StyleSheet.create({
     textShadowRadius: 4
   },
   letterLessonTitleAccentCompact: {
-    fontSize: 58,
-    lineHeight: 62
+    fontSize: 62,
+    lineHeight: 66
   },
   letterLessonUnderline: {
-    width: 150,
-    height: 5,
+    width: 0,
+    height: 0,
     borderRadius: 4,
-    backgroundColor: colors.orange
+    backgroundColor: 'transparent'
+  },
+  lessonPromptCard: {
+    minHeight: 120,
+    borderRadius: 30,
+    paddingHorizontal: 30,
+    paddingVertical: 18,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 22,
+    borderWidth: 2,
+    borderColor: 'rgba(170,132,255,0.18)',
+    shadowColor: '#8E62FF',
+    shadowOpacity: 0.12,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 6
+  },
+  lessonPromptCardCompact: {
+    minHeight: 108,
+    borderRadius: 24,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    gap: 12
+  },
+  lessonPromptBear: {
+    width: 110,
+    height: 90,
+    marginLeft: -8
+  },
+  lessonPromptBearCompact: {
+    width: 84,
+    height: 72,
+    marginLeft: -10
+  },
+  lessonPromptCopy: {
+    flex: 1
+  },
+  lessonPromptTitle: {
+    color: colors.ink,
+    fontSize: 30,
+    lineHeight: 38,
+    fontWeight: '900'
+  },
+  lessonPromptTitleCompact: {
+    fontSize: 20,
+    lineHeight: 25
+  },
+  lessonPromptText: {
+    color: '#687195',
+    fontSize: 19,
+    lineHeight: 26,
+    fontWeight: '700'
+  },
+  lessonPromptTextCompact: {
+    fontSize: 13,
+    lineHeight: 18
+  },
+  lessonPromptBadge: {
+    minWidth: 214,
+    minHeight: 78,
+    borderRadius: 24,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    borderWidth: 2,
+    borderColor: 'rgba(170,132,255,0.22)',
+    shadowColor: '#8E62FF',
+    shadowOpacity: 0.17,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 5
+  },
+  lessonPromptBadgeCompact: {
+    minWidth: 122,
+    minHeight: 58,
+    borderRadius: 18,
+    paddingHorizontal: 8,
+    gap: 6
+  },
+  lessonPromptBadgeStar: {
+    width: 52,
+    height: 52
+  },
+  lessonPromptBadgeStarCompact: {
+    width: 34,
+    height: 34
+  },
+  lessonPromptBadgeLabel: {
+    color: colors.purple,
+    fontSize: 16,
+    lineHeight: 20,
+    fontWeight: '900'
+  },
+  lessonPromptBadgeLabelCompact: {
+    fontSize: 9,
+    lineHeight: 12
+  },
+  lessonPromptBadgeValue: {
+    color: colors.purple,
+    fontSize: 30,
+    lineHeight: 36,
+    fontWeight: '900'
+  },
+  lessonPromptBadgeValueCompact: {
+    fontSize: 20,
+    lineHeight: 24
   },
   whiteboardFrame: {
-    borderRadius: 36,
-    padding: 18,
-    minHeight: 690,
+    borderRadius: 34,
+    padding: 14,
+    minHeight: 650,
     borderWidth: 3,
-    borderColor: 'rgba(143,82,28,0.28)',
+    borderColor: 'rgba(105,74,220,0.32)',
     shadowColor: '#6B3B8C',
-    shadowOpacity: 0.24,
-    shadowRadius: 22,
-    shadowOffset: { width: 0, height: 14 },
+    shadowOpacity: 0.2,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 12 },
     elevation: 10
   },
   whiteboardFrameCompact: {
     minHeight: 500,
-    borderRadius: 23,
+    borderRadius: 24,
     padding: 9
   },
   whiteboardSurface: {
@@ -2002,7 +2112,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     backgroundColor: '#FFFDFC',
     borderWidth: 3,
-    borderColor: 'rgba(125,72,32,0.22)',
+    borderColor: 'rgba(134,95,255,0.14)',
     overflow: 'hidden'
   },
   whiteboardScrewTopLeft: {
@@ -2012,7 +2122,7 @@ const styles = StyleSheet.create({
     width: 13,
     height: 13,
     borderRadius: 7,
-    backgroundColor: '#C47C35',
+    backgroundColor: '#9E79FF',
     zIndex: 3
   },
   whiteboardScrewTopRight: {
@@ -2022,21 +2132,21 @@ const styles = StyleSheet.create({
     width: 13,
     height: 13,
     borderRadius: 7,
-    backgroundColor: '#C47C35',
+    backgroundColor: '#9E79FF',
     zIndex: 3
   },
   pinnedNote: {
     position: 'absolute',
-    left: 42,
-    top: 54,
-    width: 168,
-    minHeight: 218,
-    backgroundColor: '#FFF4B8',
-    borderRadius: 4,
+    left: 48,
+    top: 58,
+    width: 188,
+    minHeight: 318,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
     alignItems: 'center',
-    paddingTop: 26,
-    paddingHorizontal: 12,
-    transform: [{ rotate: '-4deg' }],
+    paddingTop: 34,
+    paddingHorizontal: 16,
+    transform: [{ rotate: '0deg' }],
     shadowColor: '#6B3B8C',
     shadowOpacity: 0.18,
     shadowRadius: 10,
@@ -2045,12 +2155,13 @@ const styles = StyleSheet.create({
     zIndex: 5
   },
   pinnedNoteCompact: {
-    left: 36,
-    top: 48,
-    width: 74,
-    minHeight: 96,
-    paddingTop: 10,
-    paddingHorizontal: 5
+    left: 32,
+    top: 50,
+    width: 96,
+    minHeight: 210,
+    paddingTop: 20,
+    paddingHorizontal: 7,
+    borderRadius: 16
   },
   pinnedNotePin: {
     position: 'absolute',
@@ -2058,9 +2169,9 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#FF5AA4',
+    backgroundColor: 'transparent',
     borderWidth: 3,
-    borderColor: 'rgba(255,255,255,0.72)',
+    borderColor: 'transparent',
     shadowColor: '#6B3B8C',
     shadowOpacity: 0.2,
     shadowRadius: 7,
@@ -2074,15 +2185,15 @@ const styles = StyleSheet.create({
     borderWidth: 2
   },
   pinnedNoteApple: {
-    width: 82,
-    height: 70
+    width: 118,
+    height: 102
   },
   pinnedNoteAppleCompact: {
-    width: 30,
-    height: 26
+    width: 62,
+    height: 54
   },
   pinnedNoteText: {
-    marginTop: 12,
+    marginTop: 20,
     color: colors.ink,
     fontSize: 21,
     lineHeight: 26,
@@ -2090,9 +2201,9 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   pinnedNoteTextCompact: {
-    marginTop: 5,
-    fontSize: 9,
-    lineHeight: 12
+    marginTop: 14,
+    fontSize: 13,
+    lineHeight: 17
   },
   pinnedNoteWord: {
     color: colors.purple,
@@ -2102,36 +2213,36 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   pinnedNoteWordCompact: {
-    fontSize: 13,
-    lineHeight: 16
+    fontSize: 20,
+    lineHeight: 24
   },
   whiteboardBear: {
     position: 'absolute',
-    left: -58,
-    bottom: -18,
-    width: 326,
-    height: 274,
+    left: -56,
+    bottom: -10,
+    width: 278,
+    height: 230,
     zIndex: 5
   },
   whiteboardBearCompact: {
-    width: 140,
-    height: 118,
+    width: 0,
+    height: 0,
     left: 0,
-    bottom: 34
+    bottom: 0
   },
   whiteboardTraceZone: {
     position: 'absolute',
-    left: '24%',
-    right: '20%',
-    top: 60,
-    bottom: 88,
+    left: '23%',
+    right: '19%',
+    top: 42,
+    bottom: 66,
     zIndex: 2
   },
   whiteboardTraceZoneCompact: {
-    left: '9%',
-    right: '11%',
-    top: 12,
-    bottom: 44
+    left: '21%',
+    right: '14%',
+    top: 28,
+    bottom: 42
   },
   whiteboardTraceGuide: {
     height: '100%',
@@ -2142,7 +2253,7 @@ const styles = StyleSheet.create({
   boardActionDock: {
     position: 'absolute',
     right: 34,
-    top: 126,
+    top: 96,
     width: 128,
     padding: 13,
     borderRadius: 34,
@@ -2156,9 +2267,9 @@ const styles = StyleSheet.create({
     zIndex: 6
   },
   boardActionDockCompact: {
-    right: 18,
-    top: 104,
-    width: 72,
+    right: 20,
+    top: 96,
+    width: 76,
     padding: 7,
     borderRadius: 22,
     gap: 9
@@ -2198,7 +2309,7 @@ const styles = StyleSheet.create({
     bottom: 12,
     minHeight: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(228,157,82,0.7)',
+    backgroundColor: 'rgba(145,96,255,0.42)',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -2207,9 +2318,9 @@ const styles = StyleSheet.create({
     zIndex: 6
   },
   markerTrayCompact: {
-    left: '27%',
-    right: '20%',
-    bottom: 14,
+    left: '30%',
+    right: '28%',
+    bottom: 10,
     minHeight: 24,
     borderRadius: 12,
     gap: 4,
@@ -2618,9 +2729,9 @@ const styles = StyleSheet.create({
     marginBottom: -22
   },
   letterLessonGround: {
-    height: 42,
-    marginTop: -18,
-    marginBottom: -12,
+    height: 0,
+    marginTop: 0,
+    marginBottom: 0,
     overflow: 'hidden'
   },
   lessonHill: {
@@ -2656,12 +2767,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 22,
+    gap: 44,
     flexWrap: 'wrap',
     zIndex: 3
   },
   letterLessonActionsCompact: {
-    gap: 14,
+    gap: 18,
     flexWrap: 'nowrap'
   },
   letterActionPress: {
@@ -2673,7 +2784,7 @@ const styles = StyleSheet.create({
   },
   letterReplayButton: {
     minHeight: 82,
-    borderRadius: 41,
+    borderRadius: 28,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -2682,14 +2793,14 @@ const styles = StyleSheet.create({
   },
   letterActionButtonCompact: {
     minWidth: 0,
-    minHeight: 62,
-    borderRadius: 31,
+    minHeight: 64,
+    borderRadius: 20,
     gap: 8
   },
   letterMicButton: {
-    width: 104,
-    height: 104,
-    borderRadius: 52,
+    width: 118,
+    height: 118,
+    borderRadius: 59,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 6,
@@ -2697,14 +2808,14 @@ const styles = StyleSheet.create({
     ...shadow
   },
   letterMicButtonCompact: {
-    width: 74,
-    height: 74,
-    borderRadius: 37,
+    width: 82,
+    height: 82,
+    borderRadius: 41,
     borderWidth: 4
   },
   letterNextButton: {
     minHeight: 82,
-    borderRadius: 41,
+    borderRadius: 28,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -2720,6 +2831,9 @@ const styles = StyleSheet.create({
   letterActionTextCompact: {
     fontSize: 18,
     lineHeight: 22
+  },
+  letterActionTextPurple: {
+    color: colors.purple
   },
   traceCard: {
     minHeight: 330,
