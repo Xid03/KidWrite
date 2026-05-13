@@ -658,7 +658,7 @@ export function LetterTracingScreen({ go }) {
   const currentStars = letterProgress[`${letterCase}:${traceLetter}`] || 0;
   const exampleText = `${traceLetter} is for ${exampleWord}`;
   const earnedStars = completed ? 3 : Math.max(currentStars, 2);
-  const traceArtSize = isLessonWide ? Math.min(450, Math.max(380, width * 0.4)) : Math.min(300, Math.max(250, width * 0.58));
+  const traceArtSize = isLessonWide ? Math.min(450, Math.max(380, width * 0.4)) : Math.min(360, Math.max(310, width * 0.72));
   const completeTrace = () => {
     setCompleted(true);
     completeLetter(traceLetter, letterCase, 3);
@@ -2045,12 +2045,12 @@ const styles = StyleSheet.create({
     zIndex: 5
   },
   pinnedNoteCompact: {
-    left: 36,
-    top: 46,
-    width: 122,
-    minHeight: 154,
-    paddingTop: 17,
-    paddingHorizontal: 7
+    left: 34,
+    top: 42,
+    width: 76,
+    minHeight: 98,
+    paddingTop: 10,
+    paddingHorizontal: 5
   },
   pinnedNotePin: {
     position: 'absolute',
@@ -2071,8 +2071,8 @@ const styles = StyleSheet.create({
     height: 70
   },
   pinnedNoteAppleCompact: {
-    width: 54,
-    height: 46
+    width: 33,
+    height: 28
   },
   pinnedNoteText: {
     marginTop: 12,
@@ -2083,9 +2083,9 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   pinnedNoteTextCompact: {
-    marginTop: 8,
-    fontSize: 14,
-    lineHeight: 18
+    marginTop: 5,
+    fontSize: 9,
+    lineHeight: 12
   },
   pinnedNoteWord: {
     color: colors.purple,
@@ -2095,8 +2095,8 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   pinnedNoteWordCompact: {
-    fontSize: 21,
-    lineHeight: 25
+    fontSize: 14,
+    lineHeight: 17
   },
   whiteboardBear: {
     position: 'absolute',
@@ -2121,10 +2121,10 @@ const styles = StyleSheet.create({
     zIndex: 2
   },
   whiteboardTraceZoneCompact: {
-    left: '31%',
-    right: '17%',
-    top: 46,
-    bottom: 74
+    left: '18%',
+    right: '15%',
+    top: 30,
+    bottom: 64
   },
   whiteboardTraceGuide: {
     height: '100%',
@@ -2149,8 +2149,8 @@ const styles = StyleSheet.create({
     zIndex: 6
   },
   boardActionDockCompact: {
-    right: 22,
-    top: 92,
+    right: 20,
+    top: 98,
     width: 82,
     padding: 8,
     borderRadius: 24,
@@ -2200,7 +2200,7 @@ const styles = StyleSheet.create({
     zIndex: 6
   },
   markerTrayCompact: {
-    left: '24%',
+    left: '28%',
     right: '20%',
     bottom: 16,
     minHeight: 28,
