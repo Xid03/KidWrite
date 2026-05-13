@@ -630,6 +630,7 @@ export function LetterTracingScreen({ go }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const traceStepRef = useRef(1);
   const completedRef = useRef(false);
+  const activeTraceRef = useRef(false);
   const isTablet = width >= 700;
   const isLessonWide = width >= 760;
   const traceLetter = letterCase === 'lower' ? selectedLetter.toLowerCase() : selectedLetter.toUpperCase();
@@ -654,6 +655,7 @@ export function LetterTracingScreen({ go }) {
   };
   const replayTrace = () => {
     completedRef.current = false;
+    activeTraceRef.current = false;
     setCompleted(false);
     setTraceStage(1);
     setShowSuccess(false);
@@ -663,28 +665,35 @@ export function LetterTracingScreen({ go }) {
     if (completedRef.current || x == null || y == null) return;
     const nx = x / Math.max(1, padWidth);
     const ny = y / Math.max(1, padHeight);
-    const near = (targetX, targetY, radius = 0.24) => Math.hypot(nx - targetX, ny - targetY) <= radius;
+    const near = (targetX, targetY, radius = 0.18) => Math.hypot(nx - targetX, ny - targetY) <= radius;
 
     if (phase === 'start') {
       setShowSuccess(false);
-      if (near(0.5, 0.18, 0.26)) {
-        setTraceStage(2);
-      } else {
-        setTraceStage(1);
-      }
+      activeTraceRef.current = near(0.5, 0.18, 0.2);
+      setTraceStage(activeTraceRef.current ? 2 : 1);
+      return;
     }
 
-    if (traceStepRef.current === 1 && near(0.5, 0.18, 0.28)) {
+    if (phase === 'end') {
+      activeTraceRef.current = false;
+      return;
+    }
+
+    if (!activeTraceRef.current) {
+      return;
+    }
+
+    if (traceStepRef.current === 1 && near(0.5, 0.18, 0.2)) {
       setTraceStage(2);
       return;
     }
 
-    if (traceStepRef.current === 2 && near(0.38, 0.61, 0.28)) {
+    if (traceStepRef.current === 2 && near(0.38, 0.61, 0.18)) {
       setTraceStage(3);
       return;
     }
 
-    if (traceStepRef.current === 3 && near(0.74, 0.88, 0.3)) {
+    if (traceStepRef.current === 3 && near(0.74, 0.88, 0.2)) {
       completeTrace();
     }
   };
