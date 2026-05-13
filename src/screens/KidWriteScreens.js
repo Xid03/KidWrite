@@ -671,7 +671,7 @@ export function LetterTracingScreen({ go }) {
   return (
     <ScreenScaffold
       bottomInset={false}
-      backgroundColors={['#7971FF', '#82CFFF', '#FFF1FB']}
+      backgroundColors={['#7ED0FF', '#BFEAFF', '#F4D8FF']}
       showDecor={false}
       style={[styles.letterLessonScreenInner, { maxWidth: isTablet ? 1080 : 620 }]}
     >
@@ -711,7 +711,7 @@ export function LetterTracingScreen({ go }) {
         <View style={styles.whiteboardScrewTopRight} />
         <View style={styles.whiteboardSurface}>
           <PinnedAppleNote letter={traceLetter} word={exampleWord} compact={!isLessonWide} />
-          <Image source={require('../../assets/letter-lesson-bear.png')} resizeMode="contain" style={[styles.whiteboardBear, !isLessonWide && styles.whiteboardBearCompact]} />
+          <Image source={require('../../assets/letter-trace-bear-pencil.png')} resizeMode="contain" style={[styles.whiteboardBear, !isLessonWide && styles.whiteboardBearCompact]} />
           <View style={[styles.whiteboardTraceZone, !isLessonWide && styles.whiteboardTraceZoneCompact]}>
             <TracePad strokeColor="#8E62FF" onComplete={completeTrace} resetKey={traceResetKey} minPointsToComplete={36}>
               <View style={styles.whiteboardTraceGuide}>
@@ -732,14 +732,14 @@ export function LetterTracingScreen({ go }) {
         <View style={styles.feedbackPinLeft} />
         <View style={styles.feedbackPinRight} />
         <View style={[styles.feedbackStarWrap, !isLessonWide && styles.feedbackStarWrapCompact]}>
-          <Feather name="star" size={isLessonWide ? 58 : 34} color={colors.yellow} fill={colors.yellow} />
+          <Image source={require('../../assets/letter-trace-smiling-star.png')} resizeMode="contain" style={[styles.feedbackStarImage, !isLessonWide && styles.feedbackStarImageCompact]} />
         </View>
         <View style={styles.feedbackCopy}>
           <KidText style={[styles.feedbackTitle, !isLessonWide && styles.feedbackTitleCompact]}>{completed ? 'Great job!' : 'Let’s trace!'}</KidText>
           <KidText style={[styles.feedbackText, !isLessonWide && styles.feedbackTextCompact]}>{completed ? 'Keep tracing to earn more stars!' : 'Follow the purple stroke and earn stars!'}</KidText>
         </View>
         <LinearGradient colors={['#B975FF', '#7445EF']} style={[styles.starsEarnedBadge, !isLessonWide && styles.starsEarnedBadgeCompact]}>
-          <Feather name="star" size={isLessonWide ? 42 : 26} color={colors.yellow} fill={colors.yellow} />
+          <Image source={require('../../assets/letter-trace-smiling-star.png')} resizeMode="contain" style={[styles.starsEarnedIcon, !isLessonWide && styles.starsEarnedIconCompact]} />
           <View>
             <KidText style={[styles.starsEarnedLabel, !isLessonWide && styles.starsEarnedLabelCompact]}>Stars Earned</KidText>
             <KidText style={[styles.starsEarnedValue, !isLessonWide && styles.starsEarnedValueCompact]}>{earnedStars} / 3</KidText>
@@ -1862,20 +1862,20 @@ const styles = StyleSheet.create({
     left: -28,
     right: -28,
     top: 0,
-    height: 260
+    height: 340
   },
   lessonCloud: {
     position: 'absolute',
     opacity: 0.82
   },
   lessonCloudLeft: {
-    left: 8,
-    top: 114
+    left: -24,
+    top: 82
   },
   lessonCloudRight: {
-    right: 20,
-    top: 104,
-    transform: [{ scale: 0.82 }]
+    right: -10,
+    top: 66,
+    transform: [{ scale: 0.9 }]
   },
   lessonCloudPuffLarge: {
     position: 'absolute',
@@ -1983,7 +1983,7 @@ const styles = StyleSheet.create({
   whiteboardFrame: {
     borderRadius: 36,
     padding: 18,
-    minHeight: 675,
+    minHeight: 690,
     borderWidth: 3,
     borderColor: 'rgba(143,82,28,0.28)',
     shadowColor: '#6B3B8C',
@@ -1993,14 +1993,14 @@ const styles = StyleSheet.create({
     elevation: 10
   },
   whiteboardFrameCompact: {
-    minHeight: 510,
-    borderRadius: 22,
-    padding: 10
+    minHeight: 500,
+    borderRadius: 23,
+    padding: 9
   },
   whiteboardSurface: {
     flex: 1,
     borderRadius: 25,
-    backgroundColor: '#FFFDFB',
+    backgroundColor: '#FFFDFC',
     borderWidth: 3,
     borderColor: 'rgba(125,72,32,0.22)',
     overflow: 'hidden'
@@ -2045,12 +2045,12 @@ const styles = StyleSheet.create({
     zIndex: 5
   },
   pinnedNoteCompact: {
-    left: 34,
-    top: 42,
-    width: 76,
-    minHeight: 98,
-    paddingTop: 10,
-    paddingHorizontal: 5
+    left: 38,
+    top: 48,
+    width: 104,
+    minHeight: 132,
+    paddingTop: 14,
+    paddingHorizontal: 6
   },
   pinnedNotePin: {
     position: 'absolute',
@@ -2071,8 +2071,8 @@ const styles = StyleSheet.create({
     height: 70
   },
   pinnedNoteAppleCompact: {
-    width: 33,
-    height: 28
+    width: 44,
+    height: 38
   },
   pinnedNoteText: {
     marginTop: 12,
@@ -2083,9 +2083,9 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   pinnedNoteTextCompact: {
-    marginTop: 5,
-    fontSize: 9,
-    lineHeight: 12
+    marginTop: 7,
+    fontSize: 12,
+    lineHeight: 15
   },
   pinnedNoteWord: {
     color: colors.purple,
@@ -2095,22 +2095,22 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   pinnedNoteWordCompact: {
-    fontSize: 14,
-    lineHeight: 17
+    fontSize: 18,
+    lineHeight: 22
   },
   whiteboardBear: {
     position: 'absolute',
-    left: -18,
-    bottom: 0,
-    width: 276,
-    height: 220,
+    left: -58,
+    bottom: -18,
+    width: 326,
+    height: 274,
     zIndex: 5
   },
   whiteboardBearCompact: {
-    width: 168,
-    height: 140,
-    left: 8,
-    bottom: 34
+    width: 178,
+    height: 150,
+    left: 0,
+    bottom: 28
   },
   whiteboardTraceZone: {
     position: 'absolute',
@@ -2121,10 +2121,10 @@ const styles = StyleSheet.create({
     zIndex: 2
   },
   whiteboardTraceZoneCompact: {
-    left: '18%',
-    right: '15%',
-    top: 30,
-    bottom: 64
+    left: '22%',
+    right: '14%',
+    top: 26,
+    bottom: 62
   },
   whiteboardTraceGuide: {
     height: '100%',
@@ -2150,7 +2150,7 @@ const styles = StyleSheet.create({
   },
   boardActionDockCompact: {
     right: 20,
-    top: 98,
+    top: 102,
     width: 82,
     padding: 8,
     borderRadius: 24,
@@ -2200,9 +2200,9 @@ const styles = StyleSheet.create({
     zIndex: 6
   },
   markerTrayCompact: {
-    left: '28%',
-    right: '20%',
-    bottom: 16,
+    left: '26%',
+    right: '18%',
+    bottom: 14,
     minHeight: 28,
     borderRadius: 14,
     gap: 5,
@@ -2284,10 +2284,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
+  feedbackStarImage: {
+    width: 92,
+    height: 92
+  },
   feedbackStarWrapCompact: {
     width: 54,
     height: 54,
     borderRadius: 17
+  },
+  feedbackStarImageCompact: {
+    width: 58,
+    height: 58
   },
   feedbackCopy: {
     flex: 1,
@@ -2325,12 +2333,20 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'rgba(255,255,255,0.42)'
   },
+  starsEarnedIcon: {
+    width: 52,
+    height: 52
+  },
   starsEarnedBadgeCompact: {
     minWidth: 122,
     minHeight: 56,
     borderRadius: 16,
     paddingHorizontal: 8,
     gap: 5
+  },
+  starsEarnedIconCompact: {
+    width: 34,
+    height: 34
   },
   starsEarnedLabel: {
     color: colors.white,
