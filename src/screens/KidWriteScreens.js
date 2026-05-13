@@ -628,6 +628,8 @@ export function LetterTracingScreen({ go }) {
   const [traceResetKey, setTraceResetKey] = useState(0);
   const [traceStep, setTraceStep] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
+  const traceStepRef = useRef(1);
+  const completedRef = useRef(false);
   const isTablet = width >= 700;
   const isLessonWide = width >= 760;
   const traceLetter = letterCase === 'lower' ? selectedLetter.toLowerCase() : selectedLetter.toUpperCase();
@@ -636,44 +638,53 @@ export function LetterTracingScreen({ go }) {
   const exampleText = `${traceLetter} is for ${exampleWord}`;
   const earnedStars = completed ? 3 : Math.max(currentStars, 2);
   const traceArtSize = isLessonWide ? Math.min(760, Math.max(660, width * 0.72)) : Math.min(720, Math.max(620, width * 1.34));
+  const setTraceStage = (value) => {
+    traceStepRef.current = value;
+    setTraceStep(value);
+  };
   const completeTrace = () => {
-    if (completed) return;
+    if (completedRef.current) return;
+    completedRef.current = true;
     setCompleted(true);
-    setTraceStep(3);
+    setTraceStage(3);
     setShowSuccess(true);
     completeLetter(traceLetter, letterCase, 3);
     setCoins((value) => value + 5);
     speak('Great job!', soundEnabled);
   };
   const replayTrace = () => {
+    completedRef.current = false;
     setCompleted(false);
-    setTraceStep(1);
+    setTraceStage(1);
     setShowSuccess(false);
     setTraceResetKey((value) => value + 1);
   };
   const handleTracePoint = ({ phase, x, y, width: padWidth, height: padHeight }) => {
-    if (phase === 'end' || completed || x == null || y == null) return;
+    if (completedRef.current || x == null || y == null) return;
     const nx = x / Math.max(1, padWidth);
     const ny = y / Math.max(1, padHeight);
-    const near = (targetX, targetY, radius = 0.18) => Math.hypot(nx - targetX, ny - targetY) <= radius;
+    const near = (targetX, targetY, radius = 0.24) => Math.hypot(nx - targetX, ny - targetY) <= radius;
 
     if (phase === 'start') {
       setShowSuccess(false);
-      setTraceStep(near(0.5, 0.18, 0.2) ? 2 : 1);
+      if (near(0.5, 0.18, 0.26)) {
+        setTraceStage(2);
+      } else {
+        setTraceStage(1);
+      }
+    }
+
+    if (traceStepRef.current === 1 && near(0.5, 0.18, 0.28)) {
+      setTraceStage(2);
       return;
     }
 
-    if (traceStep === 1 && near(0.5, 0.18, 0.2)) {
-      setTraceStep(2);
+    if (traceStepRef.current === 2 && near(0.38, 0.61, 0.28)) {
+      setTraceStage(3);
       return;
     }
 
-    if (traceStep === 2 && near(0.38, 0.61, 0.2)) {
-      setTraceStep(3);
-      return;
-    }
-
-    if (traceStep === 3 && near(0.74, 0.88, 0.22)) {
+    if (traceStepRef.current === 3 && near(0.74, 0.88, 0.3)) {
       completeTrace();
     }
   };

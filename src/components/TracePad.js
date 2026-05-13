@@ -8,10 +8,12 @@ export function TracePad({ children, strokeColor = '#FF5B57', onComplete, onPoin
   const current = useRef([]);
   const pointCount = useRef(0);
   const size = useRef({ width: 1, height: 1 });
+  const lastPoint = useRef({ x: null, y: null });
 
   useEffect(() => {
     current.current = [];
     pointCount.current = 0;
+    lastPoint.current = { x: null, y: null };
     setPaths([]);
     setSparklePoint(null);
   }, [resetKey]);
@@ -25,6 +27,7 @@ export function TracePad({ children, strokeColor = '#FF5B57', onComplete, onPoin
           const { locationX, locationY } = event.nativeEvent;
           current.current = [`M${locationX.toFixed(1)} ${locationY.toFixed(1)}`];
           pointCount.current += 1;
+          lastPoint.current = { x: locationX, y: locationY };
           setSparklePoint({ x: locationX, y: locationY });
           onPoint?.({ phase: 'start', x: locationX, y: locationY, ...size.current });
           setPaths((prev) => [...prev, current.current.join(' ')]);
@@ -33,13 +36,14 @@ export function TracePad({ children, strokeColor = '#FF5B57', onComplete, onPoin
           const { locationX, locationY } = event.nativeEvent;
           current.current.push(`L${locationX.toFixed(1)} ${locationY.toFixed(1)}`);
           pointCount.current += 1;
+          lastPoint.current = { x: locationX, y: locationY };
           setSparklePoint({ x: locationX, y: locationY });
           onPoint?.({ phase: 'move', x: locationX, y: locationY, ...size.current });
           setPaths((prev) => [...prev.slice(0, -1), current.current.join(' ')]);
         },
         onPanResponderRelease: () => {
           setSparklePoint(null);
-          onPoint?.({ phase: 'end', x: null, y: null, ...size.current });
+          onPoint?.({ phase: 'end', ...lastPoint.current, ...size.current });
           if (pointCount.current >= minPointsToComplete) {
             onComplete?.();
           }
