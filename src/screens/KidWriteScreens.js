@@ -2138,13 +2138,13 @@ const styles = StyleSheet.create({
     zIndex: 5
   },
   pinnedNoteCompact: {
-    left: 22,
-    top: 38,
-    width: 42,
-    minHeight: 78,
-    paddingTop: 7,
-    paddingHorizontal: 3,
-    borderRadius: 8
+    left: 14,
+    top: 32,
+    width: 34,
+    minHeight: 62,
+    paddingTop: 6,
+    paddingHorizontal: 2,
+    borderRadius: 7
   },
   pinnedNotePin: {
     position: 'absolute',
@@ -2161,10 +2161,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 }
   },
   pinnedNotePinCompact: {
-    top: -5,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    top: -4,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     borderWidth: 1
   },
   pinnedNoteApple: {
@@ -2172,8 +2172,8 @@ const styles = StyleSheet.create({
     height: 74
   },
   pinnedNoteAppleCompact: {
-    width: 20,
-    height: 18
+    width: 16,
+    height: 14
   },
   pinnedNoteText: {
     marginTop: 14,
@@ -2184,9 +2184,9 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   pinnedNoteTextCompact: {
-    marginTop: 4,
-    fontSize: 6,
-    lineHeight: 8
+    marginTop: 3,
+    fontSize: 5,
+    lineHeight: 7
   },
   pinnedNoteWord: {
     color: colors.purple,
@@ -2196,8 +2196,8 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   pinnedNoteWordCompact: {
-    fontSize: 9,
-    lineHeight: 11
+    fontSize: 7,
+    lineHeight: 9
   },
   whiteboardTraceZone: {
     position: 'absolute',
@@ -2208,10 +2208,10 @@ const styles = StyleSheet.create({
     zIndex: 2
   },
   whiteboardTraceZoneCompact: {
-    left: '-4%',
-    right: '-2%',
-    top: -56,
-    bottom: -72
+    left: '11%',
+    right: '-9%',
+    top: -58,
+    bottom: -74
   },
   whiteboardTracePad: {
     flex: 1,
@@ -2241,12 +2241,12 @@ const styles = StyleSheet.create({
     zIndex: 6
   },
   boardActionDockCompact: {
-    right: 12,
-    top: 92,
-    width: 48,
-    padding: 5,
-    borderRadius: 15,
-    gap: 7
+    right: 4,
+    top: 94,
+    width: 40,
+    padding: 4,
+    borderRadius: 13,
+    gap: 6
   },
   boardActionButton: {
     width: 100,
@@ -2260,9 +2260,9 @@ const styles = StyleSheet.create({
     ...shadow
   },
   boardActionButtonCompact: {
-    width: 38,
-    height: 38,
-    borderRadius: 11,
+    width: 32,
+    height: 32,
+    borderRadius: 9,
     gap: 1,
     borderWidth: 1
   },
@@ -2273,8 +2273,8 @@ const styles = StyleSheet.create({
     fontWeight: '900'
   },
   boardActionLabelCompact: {
-    fontSize: 6,
-    lineHeight: 8
+    fontSize: 5,
+    lineHeight: 7
   },
   lessonFeedbackCard: {
     minHeight: 138,
