@@ -2139,13 +2139,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 48,
     top: 58,
-    width: 188,
-    minHeight: 318,
+    width: 154,
+    minHeight: 244,
     backgroundColor: '#FFFFFF',
     borderRadius: 22,
     alignItems: 'center',
-    paddingTop: 34,
-    paddingHorizontal: 16,
+    paddingTop: 26,
+    paddingHorizontal: 12,
     transform: [{ rotate: '0deg' }],
     shadowColor: '#6B3B8C',
     shadowOpacity: 0.18,
@@ -2157,11 +2157,11 @@ const styles = StyleSheet.create({
   pinnedNoteCompact: {
     left: 32,
     top: 50,
-    width: 96,
-    minHeight: 210,
-    paddingTop: 20,
-    paddingHorizontal: 7,
-    borderRadius: 16
+    width: 76,
+    minHeight: 154,
+    paddingTop: 14,
+    paddingHorizontal: 5,
+    borderRadius: 13
   },
   pinnedNotePin: {
     position: 'absolute',
@@ -2185,36 +2185,36 @@ const styles = StyleSheet.create({
     borderWidth: 2
   },
   pinnedNoteApple: {
-    width: 118,
-    height: 102
+    width: 86,
+    height: 74
   },
   pinnedNoteAppleCompact: {
-    width: 62,
-    height: 54
+    width: 42,
+    height: 36
   },
   pinnedNoteText: {
-    marginTop: 20,
+    marginTop: 14,
     color: colors.ink,
-    fontSize: 21,
-    lineHeight: 26,
+    fontSize: 18,
+    lineHeight: 23,
     fontWeight: '900',
     textAlign: 'center'
   },
   pinnedNoteTextCompact: {
-    marginTop: 14,
-    fontSize: 13,
-    lineHeight: 17
+    marginTop: 9,
+    fontSize: 10,
+    lineHeight: 13
   },
   pinnedNoteWord: {
     color: colors.purple,
-    fontSize: 30,
-    lineHeight: 36,
+    fontSize: 25,
+    lineHeight: 30,
     fontWeight: '900',
     textAlign: 'center'
   },
   pinnedNoteWordCompact: {
-    fontSize: 20,
-    lineHeight: 24
+    fontSize: 15,
+    lineHeight: 18
   },
   whiteboardBear: {
     position: 'absolute',
