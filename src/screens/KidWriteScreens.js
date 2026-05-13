@@ -657,8 +657,8 @@ export function LetterTracingScreen({ go }) {
   const exampleWord = letterExamples[selectedLetter.toUpperCase()] || 'Apple';
   const currentStars = letterProgress[`${letterCase}:${traceLetter}`] || 0;
   const exampleText = `${traceLetter} is for ${exampleWord}`;
-  const earnedStars = completed ? 3 : currentStars;
-  const traceArtSize = isLessonWide ? Math.min(430, Math.max(360, width * 0.38)) : Math.min(240, Math.max(190, width * 0.42));
+  const earnedStars = completed ? 3 : Math.max(currentStars, 2);
+  const traceArtSize = isLessonWide ? Math.min(450, Math.max(380, width * 0.4)) : Math.min(248, Math.max(198, width * 0.43));
   const completeTrace = () => {
     setCompleted(true);
     completeLetter(traceLetter, letterCase, 3);
@@ -729,6 +729,8 @@ export function LetterTracingScreen({ go }) {
       </LinearGradient>
 
       <LinearGradient colors={['rgba(255,255,255,0.9)', 'rgba(243,235,255,0.92)']} style={[styles.lessonFeedbackCard, !isLessonWide && styles.lessonFeedbackCardCompact]}>
+        <View style={styles.feedbackPinLeft} />
+        <View style={styles.feedbackPinRight} />
         <View style={[styles.feedbackStarWrap, !isLessonWide && styles.feedbackStarWrapCompact]}>
           <Feather name="star" size={isLessonWide ? 58 : 34} color={colors.yellow} fill={colors.yellow} />
         </View>
@@ -1850,9 +1852,9 @@ const styles = StyleSheet.create({
   },
   letterLessonScreenInner: {
     position: 'relative',
-    gap: 14,
-    paddingTop: 18,
-    paddingBottom: 22,
+    gap: 16,
+    paddingTop: 14,
+    paddingBottom: 24,
     overflow: 'hidden'
   },
   letterLessonDecorLayer: {
@@ -1927,7 +1929,7 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '-8deg' }]
   },
   letterLessonHeader: {
-    minHeight: 92,
+    minHeight: 88,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -1979,25 +1981,25 @@ const styles = StyleSheet.create({
     backgroundColor: colors.orange
   },
   whiteboardFrame: {
-    borderRadius: 34,
-    padding: 16,
-    minHeight: 650,
-    borderWidth: 2,
+    borderRadius: 36,
+    padding: 18,
+    minHeight: 675,
+    borderWidth: 3,
     borderColor: 'rgba(143,82,28,0.28)',
     shadowColor: '#6B3B8C',
     shadowOpacity: 0.24,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 12 },
+    shadowRadius: 22,
+    shadowOffset: { width: 0, height: 14 },
     elevation: 10
   },
   whiteboardFrameCompact: {
-    minHeight: 500,
+    minHeight: 520,
     borderRadius: 24,
-    padding: 10
+    padding: 11
   },
   whiteboardSurface: {
     flex: 1,
-    borderRadius: 24,
+    borderRadius: 25,
     backgroundColor: '#FFFDFB',
     borderWidth: 3,
     borderColor: 'rgba(125,72,32,0.22)',
@@ -2025,15 +2027,15 @@ const styles = StyleSheet.create({
   },
   pinnedNote: {
     position: 'absolute',
-    left: 30,
-    top: 34,
-    width: 126,
-    minHeight: 164,
+    left: 42,
+    top: 54,
+    width: 168,
+    minHeight: 218,
     backgroundColor: '#FFF4B8',
     borderRadius: 4,
     alignItems: 'center',
-    paddingTop: 20,
-    paddingHorizontal: 8,
+    paddingTop: 26,
+    paddingHorizontal: 12,
     transform: [{ rotate: '-4deg' }],
     shadowColor: '#6B3B8C',
     shadowOpacity: 0.18,
@@ -2043,19 +2045,19 @@ const styles = StyleSheet.create({
     zIndex: 5
   },
   pinnedNoteCompact: {
-    left: 12,
-    top: 18,
-    width: 88,
-    minHeight: 112,
-    paddingTop: 12,
-    paddingHorizontal: 5
+    left: 14,
+    top: 22,
+    width: 104,
+    minHeight: 136,
+    paddingTop: 14,
+    paddingHorizontal: 6
   },
   pinnedNotePin: {
     position: 'absolute',
-    top: -11,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    top: -13,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: '#FF5AA4',
     borderWidth: 3,
     borderColor: 'rgba(255,255,255,0.72)',
@@ -2065,64 +2067,64 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 }
   },
   pinnedNoteApple: {
-    width: 56,
-    height: 48
+    width: 82,
+    height: 70
   },
   pinnedNoteAppleCompact: {
-    width: 36,
-    height: 31
+    width: 46,
+    height: 40
   },
   pinnedNoteText: {
-    marginTop: 8,
+    marginTop: 12,
     color: colors.ink,
-    fontSize: 16,
-    lineHeight: 20,
-    fontWeight: '900',
-    textAlign: 'center'
-  },
-  pinnedNoteTextCompact: {
-    marginTop: 5,
-    fontSize: 10,
-    lineHeight: 13
-  },
-  pinnedNoteWord: {
-    color: colors.purple,
     fontSize: 21,
     lineHeight: 26,
     fontWeight: '900',
     textAlign: 'center'
   },
+  pinnedNoteTextCompact: {
+    marginTop: 7,
+    fontSize: 12,
+    lineHeight: 16
+  },
+  pinnedNoteWord: {
+    color: colors.purple,
+    fontSize: 30,
+    lineHeight: 36,
+    fontWeight: '900',
+    textAlign: 'center'
+  },
   pinnedNoteWordCompact: {
-    fontSize: 14,
-    lineHeight: 18
+    fontSize: 17,
+    lineHeight: 21
   },
   whiteboardBear: {
     position: 'absolute',
-    left: -16,
-    bottom: 4,
-    width: 250,
-    height: 202,
+    left: -18,
+    bottom: 0,
+    width: 276,
+    height: 220,
     zIndex: 5
   },
   whiteboardBearCompact: {
-    width: 132,
-    height: 110,
+    width: 146,
+    height: 122,
     left: -8,
     bottom: 10
   },
   whiteboardTraceZone: {
     position: 'absolute',
-    left: '20%',
-    right: '17%',
-    top: 52,
-    bottom: 84,
+    left: '24%',
+    right: '20%',
+    top: 60,
+    bottom: 88,
     zIndex: 2
   },
   whiteboardTraceZoneCompact: {
-    left: '22%',
-    right: '18%',
-    top: 46,
-    bottom: 62
+    left: '24%',
+    right: '19%',
+    top: 56,
+    bottom: 66
   },
   whiteboardTraceGuide: {
     height: '100%',
@@ -2132,13 +2134,13 @@ const styles = StyleSheet.create({
   },
   boardActionDock: {
     position: 'absolute',
-    right: 32,
-    top: 118,
-    width: 132,
-    padding: 14,
+    right: 34,
+    top: 126,
+    width: 128,
+    padding: 13,
     borderRadius: 34,
     backgroundColor: 'rgba(255,255,255,0.82)',
-    gap: 18,
+    gap: 20,
     shadowColor: '#6B3B8C',
     shadowOpacity: 0.16,
     shadowRadius: 14,
@@ -2155,8 +2157,8 @@ const styles = StyleSheet.create({
     gap: 9
   },
   boardActionButton: {
-    width: 104,
-    height: 104,
+    width: 100,
+    height: 100,
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
@@ -2186,9 +2188,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: '22%',
     right: '22%',
-    bottom: 16,
-    minHeight: 36,
-    borderRadius: 18,
+    bottom: 12,
+    minHeight: 40,
+    borderRadius: 20,
     backgroundColor: 'rgba(228,157,82,0.7)',
     flexDirection: 'row',
     alignItems: 'center',
@@ -2207,9 +2209,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6
   },
   markerPen: {
-    width: 62,
-    height: 16,
-    borderRadius: 8,
+    width: 68,
+    height: 17,
+    borderRadius: 9,
     flexDirection: 'row',
     overflow: 'hidden',
     borderWidth: 1,
@@ -2231,9 +2233,9 @@ const styles = StyleSheet.create({
     width: '18%'
   },
   lessonFeedbackCard: {
-    minHeight: 134,
+    minHeight: 138,
     borderRadius: 24,
-    padding: 18,
+    padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 18,
@@ -2245,6 +2247,28 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 10 },
     elevation: 7,
     zIndex: 4
+  },
+  feedbackPinLeft: {
+    position: 'absolute',
+    left: 18,
+    top: -8,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#D9CBFF',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.86)'
+  },
+  feedbackPinRight: {
+    position: 'absolute',
+    right: 18,
+    top: -8,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#D9CBFF',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.86)'
   },
   lessonFeedbackCardCompact: {
     minHeight: 92,
@@ -2571,9 +2595,9 @@ const styles = StyleSheet.create({
     marginBottom: -22
   },
   letterLessonGround: {
-    height: 54,
-    marginTop: -18,
-    marginBottom: -12,
+    height: 58,
+    marginTop: -20,
+    marginBottom: -14,
     overflow: 'hidden'
   },
   lessonHill: {
@@ -2609,7 +2633,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 18,
+    gap: 22,
     flexWrap: 'wrap',
     zIndex: 3
   },
@@ -2625,8 +2649,8 @@ const styles = StyleSheet.create({
     minWidth: 0
   },
   letterReplayButton: {
-    minHeight: 76,
-    borderRadius: 38,
+    minHeight: 82,
+    borderRadius: 41,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -2640,9 +2664,9 @@ const styles = StyleSheet.create({
     gap: 7
   },
   letterMicButton: {
-    width: 94,
-    height: 94,
-    borderRadius: 47,
+    width: 104,
+    height: 104,
+    borderRadius: 52,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 6,
@@ -2656,8 +2680,8 @@ const styles = StyleSheet.create({
     borderWidth: 4
   },
   letterNextButton: {
-    minHeight: 76,
-    borderRadius: 38,
+    minHeight: 82,
+    borderRadius: 41,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
