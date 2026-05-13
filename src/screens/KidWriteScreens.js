@@ -109,19 +109,21 @@ function LessonTraceGuide({ letter = 'A', size = 420, completed = false, activeH
         d="M90 276L176 50L270 276M132 196H222"
         fill="none"
         stroke="#8E62FF"
-        strokeWidth="38"
+        strokeWidth="22"
         strokeLinecap="round"
         strokeLinejoin="round"
-        opacity="0.12"
+        strokeDasharray="1 28"
+        opacity="0.18"
       />
       <Path
         d="M90 276L176 50L270 276M132 196H222"
         fill="none"
         stroke="#FFFFFF"
-        strokeWidth="18"
+        strokeWidth="8"
         strokeLinecap="round"
         strokeLinejoin="round"
-        opacity="0.58"
+        strokeDasharray="1 28"
+        opacity="0.5"
       />
       <Circle cx="176" cy="50" r="22" fill="#7A3EF2" stroke="#FFFFFF" strokeWidth="4" />
       <SvgText x="169" y="59" fontSize="24" fontWeight="900" fill="#FFFFFF">1</SvgText>
@@ -624,6 +626,8 @@ export function LetterTracingScreen({ go }) {
   const { width } = useWindowDimensions();
   const [completed, setCompleted] = useState(false);
   const [traceResetKey, setTraceResetKey] = useState(0);
+  const [traceStep, setTraceStep] = useState(1);
+  const [showSuccess, setShowSuccess] = useState(false);
   const isTablet = width >= 700;
   const isLessonWide = width >= 760;
   const traceLetter = letterCase === 'lower' ? selectedLetter.toLowerCase() : selectedLetter.toUpperCase();
@@ -633,13 +637,45 @@ export function LetterTracingScreen({ go }) {
   const earnedStars = completed ? 3 : Math.max(currentStars, 2);
   const traceArtSize = isLessonWide ? Math.min(760, Math.max(660, width * 0.72)) : Math.min(720, Math.max(620, width * 1.34));
   const completeTrace = () => {
+    if (completed) return;
     setCompleted(true);
+    setTraceStep(3);
+    setShowSuccess(true);
     completeLetter(traceLetter, letterCase, 3);
     setCoins((value) => value + 5);
+    speak('Great job!', soundEnabled);
   };
   const replayTrace = () => {
     setCompleted(false);
+    setTraceStep(1);
+    setShowSuccess(false);
     setTraceResetKey((value) => value + 1);
+  };
+  const handleTracePoint = ({ phase, x, y, width: padWidth, height: padHeight }) => {
+    if (phase === 'end' || completed || x == null || y == null) return;
+    const nx = x / Math.max(1, padWidth);
+    const ny = y / Math.max(1, padHeight);
+    const near = (targetX, targetY, radius = 0.18) => Math.hypot(nx - targetX, ny - targetY) <= radius;
+
+    if (phase === 'start') {
+      setShowSuccess(false);
+      setTraceStep(near(0.5, 0.18, 0.2) ? 2 : 1);
+      return;
+    }
+
+    if (traceStep === 1 && near(0.5, 0.18, 0.2)) {
+      setTraceStep(2);
+      return;
+    }
+
+    if (traceStep === 2 && near(0.38, 0.61, 0.2)) {
+      setTraceStep(3);
+      return;
+    }
+
+    if (traceStep === 3 && near(0.74, 0.88, 0.22)) {
+      completeTrace();
+    }
   };
   return (
     <ScreenScaffold
@@ -700,12 +736,21 @@ export function LetterTracingScreen({ go }) {
         <View style={styles.whiteboardSurface}>
           <PinnedAppleNote letter={traceLetter} word={exampleWord} compact={!isLessonWide} />
           <View style={[styles.whiteboardTraceZone, !isLessonWide && styles.whiteboardTraceZoneCompact]}>
-            <TracePad strokeColor="#8E62FF" onComplete={completeTrace} resetKey={traceResetKey} minPointsToComplete={36} style={styles.whiteboardTracePad}>
+            <TracePad strokeColor="#8E62FF" onPoint={handleTracePoint} resetKey={traceResetKey} minPointsToComplete={9999} style={styles.whiteboardTracePad}>
               <View style={styles.whiteboardTraceGuide}>
                 <LessonTraceGuide letter={traceLetter} size={traceArtSize} completed={completed} activeHint />
               </View>
             </TracePad>
           </View>
+          {showSuccess ? (
+            <LinearGradient colors={['#FFFFFF', '#F8F2FF']} style={styles.traceSuccessToast}>
+              <Image source={require('../../assets/letter-trace-smiling-star.png')} resizeMode="contain" style={styles.traceSuccessStar} />
+              <View>
+                <KidText style={styles.traceSuccessTitle}>Great Job!</KidText>
+                <KidText style={styles.traceSuccessText}>You traced A!</KidText>
+              </View>
+            </LinearGradient>
+          ) : null}
           <View style={[styles.boardActionDock, !isLessonWide && styles.boardActionDockCompact]}>
             <BoardActionButton icon="volume-2" label="Listen" colors={['#A96DFF', '#743AF1']} onPress={() => speak(exampleText, soundEnabled)} compact={!isLessonWide} />
             <BoardActionButton icon="lightbulb" label="Hint" colors={['#FFD957', '#FFB621']} onPress={() => speak('Start at the top and trace down the purple line.', soundEnabled)} compact={!isLessonWide} />
@@ -2257,6 +2302,43 @@ const styles = StyleSheet.create({
   boardActionLabelCompact: {
     fontSize: 5,
     lineHeight: 7
+  },
+  traceSuccessToast: {
+    position: 'absolute',
+    left: '31%',
+    right: '25%',
+    bottom: 26,
+    minHeight: 78,
+    borderRadius: 24,
+    paddingHorizontal: 18,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    borderWidth: 2,
+    borderColor: 'rgba(142,98,255,0.2)',
+    shadowColor: '#8E62FF',
+    shadowOpacity: 0.18,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 8,
+    zIndex: 8
+  },
+  traceSuccessStar: {
+    width: 48,
+    height: 48
+  },
+  traceSuccessTitle: {
+    color: colors.purple,
+    fontSize: 22,
+    lineHeight: 27,
+    fontWeight: '900'
+  },
+  traceSuccessText: {
+    color: colors.ink,
+    fontSize: 13,
+    lineHeight: 17,
+    fontWeight: '800'
   },
   lessonFeedbackCard: {
     minHeight: 138,

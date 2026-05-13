@@ -2,11 +2,12 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PanResponder, StyleSheet, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-export function TracePad({ children, strokeColor = '#FF5B57', onComplete, resetKey, minPointsToComplete = 28, style }) {
+export function TracePad({ children, strokeColor = '#FF5B57', onComplete, onPoint, resetKey, minPointsToComplete = 28, style }) {
   const [paths, setPaths] = useState([]);
   const [sparklePoint, setSparklePoint] = useState(null);
   const current = useRef([]);
   const pointCount = useRef(0);
+  const size = useRef({ width: 1, height: 1 });
 
   useEffect(() => {
     current.current = [];
@@ -25,6 +26,7 @@ export function TracePad({ children, strokeColor = '#FF5B57', onComplete, resetK
           current.current = [`M${locationX.toFixed(1)} ${locationY.toFixed(1)}`];
           pointCount.current += 1;
           setSparklePoint({ x: locationX, y: locationY });
+          onPoint?.({ phase: 'start', x: locationX, y: locationY, ...size.current });
           setPaths((prev) => [...prev, current.current.join(' ')]);
         },
         onPanResponderMove: (event) => {
@@ -32,20 +34,28 @@ export function TracePad({ children, strokeColor = '#FF5B57', onComplete, resetK
           current.current.push(`L${locationX.toFixed(1)} ${locationY.toFixed(1)}`);
           pointCount.current += 1;
           setSparklePoint({ x: locationX, y: locationY });
+          onPoint?.({ phase: 'move', x: locationX, y: locationY, ...size.current });
           setPaths((prev) => [...prev.slice(0, -1), current.current.join(' ')]);
         },
         onPanResponderRelease: () => {
           setSparklePoint(null);
+          onPoint?.({ phase: 'end', x: null, y: null, ...size.current });
           if (pointCount.current >= minPointsToComplete) {
             onComplete?.();
           }
         }
       }),
-    [minPointsToComplete, onComplete]
+    [minPointsToComplete, onComplete, onPoint]
   );
 
   return (
-    <View style={[styles.pad, style]} {...responder.panHandlers}>
+    <View
+      style={[styles.pad, style]}
+      onLayout={(event) => {
+        size.current = event.nativeEvent.layout;
+      }}
+      {...responder.panHandlers}
+    >
       <View pointerEvents="none" style={StyleSheet.absoluteFill}>{children}</View>
       <Svg pointerEvents="none" width="100%" height="100%" style={StyleSheet.absoluteFill}>
         {paths.map((path, index) => (
