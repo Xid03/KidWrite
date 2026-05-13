@@ -29,7 +29,7 @@ export function TracePad({ children, strokeColor = '#FF5B57', onComplete, onPoin
           pointCount.current += 1;
           lastPoint.current = { x: locationX, y: locationY };
           setSparklePoint({ x: locationX, y: locationY });
-          onPoint?.({ phase: 'start', x: locationX, y: locationY, ...size.current });
+          onPoint?.({ ...size.current, phase: 'start', x: locationX, y: locationY });
           setPaths((prev) => [...prev, current.current.join(' ')]);
         },
         onPanResponderMove: (event) => {
@@ -38,12 +38,12 @@ export function TracePad({ children, strokeColor = '#FF5B57', onComplete, onPoin
           pointCount.current += 1;
           lastPoint.current = { x: locationX, y: locationY };
           setSparklePoint({ x: locationX, y: locationY });
-          onPoint?.({ phase: 'move', x: locationX, y: locationY, ...size.current });
+          onPoint?.({ ...size.current, phase: 'move', x: locationX, y: locationY });
           setPaths((prev) => [...prev.slice(0, -1), current.current.join(' ')]);
         },
         onPanResponderRelease: () => {
           setSparklePoint(null);
-          onPoint?.({ phase: 'end', ...lastPoint.current, ...size.current });
+          onPoint?.({ ...size.current, phase: 'end', ...lastPoint.current });
           if (pointCount.current >= minPointsToComplete) {
             onComplete?.();
           }
